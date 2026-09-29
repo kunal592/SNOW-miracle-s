@@ -89,6 +89,13 @@ export function App() {
   // Toast System State
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
+  // Dynamic Visual Aesthetics Theme switcher effect
+  useEffect(() => {
+    if (user.themePreference) {
+      document.documentElement.setAttribute('data-theme', user.themePreference);
+    }
+  }, [user.themePreference]);
+
   const handleShowToast = (text: string, type: 'success' | 'error' | 'info' = 'info') => {
     const newToast: ToastMessage = { id: Math.random().toString(36), text, type };
     setToasts((prev) => [...prev, newToast]);
@@ -282,7 +289,6 @@ export function App() {
     setCognitiveAttempts(updatedAttempts);
     Storage.setCognitiveAttempts(updatedAttempts);
 
-    // Update cognitive profile scores
     const newProf: CognitiveProfile = {
       ...cognitiveProfile,
       totalSolved: cognitiveProfile.totalSolved + 1,
