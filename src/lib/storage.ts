@@ -13,7 +13,12 @@ import {
   Milestone,
   JournalEntry,
   Category,
-  Notification
+  Notification,
+  CognitiveAttempt,
+  CognitiveProfile,
+  AIMemory,
+  AIActivity,
+  AIInsight
 } from '../types';
 import {
   initialUser,
@@ -30,7 +35,12 @@ import {
   initialMilestones,
   initialInboxEntries,
   initialJournalEntries,
-  initialNotifications
+  initialNotifications,
+  initialCognitiveAttempts,
+  initialCognitiveProfile,
+  initialAIMemories,
+  initialAIActivityLogs,
+  initialAIInsights
 } from './mockData';
 
 const STORAGE_KEYS = {
@@ -48,7 +58,12 @@ const STORAGE_KEYS = {
   MILESTONES: 'snow_milestones',
   INBOX: 'snow_inbox',
   JOURNAL: 'snow_journal',
-  NOTIFICATIONS: 'snow_notifications'
+  NOTIFICATIONS: 'snow_notifications',
+  COGNITIVE_ATTEMPTS: 'snow_cognitive_attempts',
+  COGNITIVE_PROFILE: 'snow_cognitive_profile',
+  AI_MEMORIES: 'snow_ai_memories',
+  AI_ACTIVITIES: 'snow_ai_activities',
+  AI_INSIGHTS: 'snow_ai_insights'
 };
 
 function getItem<T>(key: string, fallback: T): T {
@@ -114,6 +129,22 @@ export const Storage = {
 
   getNotifications: (): Notification[] => getItem(STORAGE_KEYS.NOTIFICATIONS, initialNotifications),
   setNotifications: (items: Notification[]) => setItem(STORAGE_KEYS.NOTIFICATIONS, items),
+
+  // COGNITIVE & AI EXTENSIONS
+  getCognitiveAttempts: (): CognitiveAttempt[] => getItem(STORAGE_KEYS.COGNITIVE_ATTEMPTS, initialCognitiveAttempts),
+  setCognitiveAttempts: (items: CognitiveAttempt[]) => setItem(STORAGE_KEYS.COGNITIVE_ATTEMPTS, items),
+
+  getCognitiveProfile: (): CognitiveProfile => getItem(STORAGE_KEYS.COGNITIVE_PROFILE, initialCognitiveProfile),
+  setCognitiveProfile: (prof: CognitiveProfile) => setItem(STORAGE_KEYS.COGNITIVE_PROFILE, prof),
+
+  getAIMemories: (): AIMemory[] => getItem(STORAGE_KEYS.AI_MEMORIES, initialAIMemories),
+  setAIMemories: (mems: AIMemory[]) => setItem(STORAGE_KEYS.AI_MEMORIES, mems),
+
+  getAIActivityLogs: (): AIActivity[] => getItem(STORAGE_KEYS.AI_ACTIVITIES, initialAIActivityLogs),
+  setAIActivityLogs: (logs: AIActivity[]) => setItem(STORAGE_KEYS.AI_ACTIVITIES, logs),
+
+  getAIInsights: (): AIInsight[] => getItem(STORAGE_KEYS.AI_INSIGHTS, initialAIInsights),
+  setAIInsights: (insights: AIInsight[]) => setItem(STORAGE_KEYS.AI_INSIGHTS, insights),
 
   resetAll: () => {
     localStorage.clear();

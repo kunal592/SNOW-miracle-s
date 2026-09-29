@@ -18,7 +18,9 @@ import {
   Settings,
   Plus,
   Sparkles,
-  Zap
+  BrainCircuit,
+  Zap,
+  MessageSquare
 } from 'lucide-react';
 import { User } from '../types';
 
@@ -44,6 +46,14 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
         { route: '/', label: 'Command Center', icon: Home },
         { route: '/inbox', label: 'Universal Inbox', icon: Inbox, badge: unreadInboxCount },
         { route: '/inbox/review', label: 'AI Review Queue', icon: CheckSquare }
+      ]
+    },
+    {
+      title: 'AI & COGNITION',
+      items: [
+        { route: '/cognitive', label: 'Cognitive Lab', icon: BrainCircuit },
+        { route: '/cognitive/profile', label: 'Skill Profile (TPI)', icon: Sparkles },
+        { route: '/ai', label: 'AI Supervisor', icon: MessageSquare }
       ]
     },
     {

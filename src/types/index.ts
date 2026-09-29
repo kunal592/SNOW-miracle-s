@@ -17,12 +17,154 @@ export type GoalStatus = 'Not Started' | 'In Progress' | 'On Track' | 'At Risk' 
 export type MilestoneStatus = 'Upcoming' | 'Today' | 'Completed' | 'Overdue';
 export type InboxStatus = 'Raw' | 'Processing' | 'Needs Review' | 'Approved' | 'Rejected';
 
+// COGNITIVE & AI SUPERVISOR TYPES
+export type CognitiveSkillCategory = 
+  | 'Logical' 
+  | 'Analytical' 
+  | 'Critical' 
+  | 'Operational' 
+  | 'Observational' 
+  | 'Numerical' 
+  | 'Systems Thinking'
+  | 'Problem Solving';
+
+export type CognitiveDifficultyLevel = 1 | 2 | 3 | 4 | 5;
+
+export interface CognitiveQuestion {
+  id: string;
+  category: CognitiveSkillCategory;
+  difficulty: CognitiveDifficultyLevel;
+  question: string;
+  contextData?: string; // Optional real-life context from user data
+  hints: string[]; // [Hint 1 Direction, Hint 2 Stronger, Hint 3 Almost there]
+  correctAnswer: string;
+  explanation: string;
+  skills: string[];
+  estimatedTimeMins: number;
+}
+
+export interface CognitiveAttempt {
+  id: string;
+  questionId: string;
+  startedAt: string;
+  completedAt?: string;
+  timeTakenSecs: number;
+  userAnswer: string;
+  isCorrect: boolean;
+  isAssisted: boolean; // True if hints used
+  hintsRequested: number;
+  attemptsCount: number;
+  reasoningScore: number; // 1 - 10
+  aiFeedback: {
+    verdict: 'Correct' | 'Incorrect' | 'Partial';
+    qualityScore: number;
+    whatWentWell: string[];
+    whatCouldImprove: string[];
+    detailedReasoning: string;
+  };
+}
+
+export interface CognitiveProfile {
+  level: number; // e.g. 2.4
+  streakDays: number;
+  totalSolved: number;
+  independentSolves: number;
+  assistedSolves: number;
+  averageSolveTimeSecs: number;
+  averageReasoningScore: number;
+  trainingPerformanceIndex: Record<CognitiveSkillCategory, number>; // 0 - 100
+  skillLevels: Record<CognitiveSkillCategory, number>; // 1.0 - 5.0
+}
+
+export interface AIInsight {
+  id: string;
+  title: string;
+  module: 'Finance' | 'Time' | 'Learning' | 'Health' | 'Milestones' | 'Cognitive';
+  confidenceLevel: 'High' | 'Moderate' | 'Low';
+  confidenceReason: string;
+  fact: string;
+  interpretation: string;
+  hypothesis: string;
+  recommendation: string;
+  underlyingData: {
+    metric: string;
+    value: string;
+    previousValue?: string;
+  }[];
+  createdAt: string;
+}
+
+export interface AIRecommendation {
+  id: string;
+  title: string;
+  description: string;
+  priority: 'High' | 'Medium' | 'Low';
+  actionRoute: string;
+  actionLabel: string;
+}
+
+export interface AIMemory {
+  id: string;
+  category: 'Goals' | 'Preferences' | 'Patterns' | 'Milestones' | 'Financial Rules' | 'Learning History';
+  memoryText: string;
+  confidence: number;
+  createdAt: string;
+}
+
+export interface AIActivity {
+  id: string;
+  timestamp: string;
+  action: string;
+  module: string;
+  details: string;
+}
+
+export interface MilestonePaceAnalysis {
+  milestoneId: string;
+  milestoneTitle: string;
+  targetHours: number;
+  currentHours: number;
+  progressPercent: number;
+  daysRemaining: number;
+  requiredDailyPace: string;
+  actualRecentPace: string;
+  status: 'Ahead' | 'On Track' | 'Pace Increase Required' | 'At Risk';
+  aiObservation: string;
+  suggestedAction: 'Increase Daily Pace' | 'Adjust Target Date' | 'Modify Scope';
+}
+
+export interface DailyBrief {
+  id: string;
+  date: string;
+  todayFocus: string;
+  whyFocus: string;
+  evidenceText: string;
+  todayChallengeId: string;
+  todayChallengeTitle: string;
+  upcomingMilestoneTitle: string;
+}
+
+export interface WeeklyReview {
+  id: string;
+  weekLabel: string;
+  challengesCompleted: number;
+  independentSolves: number;
+  assistedSolves: number;
+  averageReasoningScore: number;
+  strongestSkill: CognitiveSkillCategory;
+  weakestSkill: CognitiveSkillCategory;
+  weeklyPattern: string;
+  suggestedFocusNextWeek: CognitiveSkillCategory;
+  suggestedChallengeMix: { category: CognitiveSkillCategory; percent: number }[];
+}
+
+// EXISTING BASE TYPES
 export interface User {
   id: string;
   name: string;
   title: string;
-  winterArcStartDate: string; // ISO date '2026-09-29'
-  currentDayIndex: number; // e.g. Day 1
+  winterArcStartDate: string;
+  currentDayIndex: number;
   avatarUrl?: string;
   themePreference: 'warm-hearth' | 'cozy-light' | 'amber-gold' | 'cyber-ember';
 }
@@ -37,14 +179,14 @@ export interface AIExtraction {
   isConsumption: boolean;
   dailyAllocationCost?: number;
   extractedTimeHours?: number;
-  confidenceScore: number; // 0 - 100
+  confidenceScore: number;
   aiExplanation: string;
   suggestedAction: 'Create Expense' | 'Create Consumption' | 'Log Time' | 'Log Learning' | 'Log Food' | 'Log Health';
 }
 
 export interface InboxEntry {
   id: string;
-  timestamp: string; // ISO format
+  timestamp: string;
   rawText: string;
   status: InboxStatus;
   aiExtraction?: AIExtraction;
@@ -106,8 +248,8 @@ export interface FuelEntry {
 export interface TimeEntry {
   id: string;
   date: string;
-  startTime: string; // HH:mm
-  endTime: string; // HH:mm
+  startTime: string;
+  endTime: string;
   durationMinutes: number;
   activity: string;
   category: 'Work' | 'Learning' | 'Health' | 'Personal' | 'Commute' | 'Entertainment' | 'Sleep' | 'Other';
@@ -161,15 +303,15 @@ export interface HealthEntry {
   workoutType?: string;
   stepsCount: number;
   weightKg: number;
-  energyLevel: number; // 1-10
-  moodLevel: number; // 1-10
+  energyLevel: number;
+  moodLevel: number;
 }
 
 export interface Goal {
   id: string;
   title: string;
   description: string;
-  parentGoalId?: string; // For hierarchy e.g. Winter Arc -> Career -> AI Engineer
+  parentGoalId?: string;
   category: 'Career' | 'Finance' | 'Health' | 'Mindset' | 'Skills';
   startDate: string;
   targetDate: string;
@@ -228,8 +370,8 @@ export interface Checkpoint {
 export interface JournalEntry {
   id: string;
   date: string;
-  moodRating: number; // 1-5 or 1-10
-  energyRating: number; // 1-10
+  moodRating: number;
+  energyRating: number;
   whatHappened: string;
   whatWentWell: string;
   whatWentWrong: string;

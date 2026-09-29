@@ -13,7 +13,11 @@ import {
   Zap,
   Target,
   Clock,
-  DollarSign
+  DollarSign,
+  BrainCircuit,
+  Award,
+  MessageSquare,
+  Database
 } from 'lucide-react';
 
 interface MoreMenuViewProps {
@@ -23,6 +27,11 @@ interface MoreMenuViewProps {
 
 export const MoreMenuView: React.FC<MoreMenuViewProps> = ({ onNavigate, unreadReviewCount }) => {
   const menuItems = [
+    { route: '/cognitive', label: 'Cognitive Lab', icon: BrainCircuit, desc: 'Train reasoning & problem solving' },
+    { route: '/cognitive/profile', label: 'Cognitive Skill Profile (TPI)', icon: Award, desc: 'Radar chart across 8 skills' },
+    { route: '/ai', label: 'AI Supervisor', icon: MessageSquare, desc: 'Evidence-backed life observation' },
+    { route: '/ai/memory', label: 'AI Memory Manager', icon: Database, desc: 'Inspect & edit AI rules' },
+    { route: '/ai/activity', label: 'AI Activity Log', icon: Activity, desc: 'Audit log of automated actions' },
     { route: '/inbox/review', label: 'AI Review Queue', icon: CheckSquare, badge: unreadReviewCount, desc: 'Confirm AI extractions' },
     { route: '/finance', label: 'Finance & Accounting', icon: DollarSign, desc: 'Cash outflow vs consumption' },
     { route: '/finance/consumption', label: 'Consumption Engine', icon: Sparkles, desc: 'Daily cost allocation' },
@@ -43,7 +52,7 @@ export const MoreMenuView: React.FC<MoreMenuViewProps> = ({ onNavigate, unreadRe
     <div className="space-y-6 animate-in fade-in duration-300">
       <div>
         <h1 className="text-2xl font-black text-amber-100 font-outfit">SNOW Directory</h1>
-        <p className="text-xs text-amber-200/80">Access all personal operating system modules and features.</p>
+        <p className="text-xs text-amber-200/80">Access all personal operating system modules, Cognitive Lab, and AI Supervisor features.</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

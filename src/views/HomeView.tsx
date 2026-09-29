@@ -26,7 +26,8 @@ import {
   LearningSession,
   Goal,
   Milestone,
-  InboxEntry
+  InboxEntry,
+  DailyBrief
 } from '../types';
 import { formatCurrency, formatMinutes, calculateActiveDailyConsumptionCost } from '../lib/calculations';
 
@@ -42,6 +43,7 @@ interface HomeViewProps {
   goals: Goal[];
   milestones: Milestone[];
   inbox: InboxEntry[];
+  dailyBrief: DailyBrief;
 }
 
 export const HomeView: React.FC<HomeViewProps> = ({
@@ -55,7 +57,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
   learningSessions,
   goals,
   milestones,
-  inbox
+  inbox,
+  dailyBrief
 }) => {
   const todayStr = '2026-09-29';
   const todayHealth = healthEntries.find((h) => h.date === todayStr) || healthEntries[0];
@@ -67,9 +70,6 @@ export const HomeView: React.FC<HomeViewProps> = ({
     .reduce((sum, t) => sum + t.durationMinutes, 0);
   const learningMins = todayTime
     .filter((t) => t.category === 'Learning')
-    .reduce((sum, t) => sum + t.durationMinutes, 0);
-  const workMins = todayTime
-    .filter((t) => t.category === 'Work')
     .reduce((sum, t) => sum + t.durationMinutes, 0);
 
   // Cash spent today vs consumption cost
@@ -109,6 +109,49 @@ export const HomeView: React.FC<HomeViewProps> = ({
               className="px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-neutral-950 font-extrabold text-sm shadow-lg shadow-amber-950/60 flex items-center gap-2 transition active:scale-95"
             >
               <Plus className="w-5 h-5 stroke-[3]" /> Fast Life Dump
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* AI DAILY BRIEF CARD */}
+      <div className="p-5 rounded-3xl bg-[#1c1815] border border-amber-500/30 shadow-xl space-y-3">
+        <div className="flex items-center justify-between border-b border-amber-500/15 pb-2.5">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 rounded-lg bg-amber-500/20 text-amber-400">
+              <Sparkles className="w-4 h-4 animate-pulse" />
+            </div>
+            <h2 className="text-base font-bold text-amber-100 font-outfit">AI DAILY BRIEF</h2>
+          </div>
+          <button
+            onClick={() => onNavigate('/ai')}
+            className="text-xs text-amber-400 hover:underline flex items-center gap-1"
+          >
+            Ask AI Supervisor →
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div className="p-3 rounded-2xl bg-[#12100e] border border-amber-500/15 space-y-1">
+            <span className="font-bold text-amber-400 uppercase text-[10px]">Today's Focus:</span>
+            <p className="text-amber-100 font-semibold">{dailyBrief.todayFocus}</p>
+          </div>
+
+          <div className="p-3 rounded-2xl bg-[#12100e] border border-amber-500/15 space-y-1">
+            <span className="font-bold text-orange-400 uppercase text-[10px]">Evidence / Why:</span>
+            <p className="text-neutral-300">{dailyBrief.whyFocus}</p>
+          </div>
+
+          <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col justify-between">
+            <div>
+              <span className="font-bold text-amber-300 uppercase text-[10px] block mb-0.5">Cognitive Challenge:</span>
+              <p className="text-amber-100 font-bold font-outfit truncate">{dailyBrief.todayChallengeTitle}</p>
+            </div>
+            <button
+              onClick={() => onNavigate('/cognitive')}
+              className="mt-2 py-1.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-neutral-950 font-bold text-[11px] shadow flex items-center justify-center gap-1"
+            >
+              Start Challenge <ArrowRight className="w-3 h-3" />
             </button>
           </div>
         </div>
@@ -291,82 +334,6 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </div>
-
-      {/* RECENT INBOX & QUICK ACTIONS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* RECENT INBOX */}
-        <div className="md:col-span-2 p-5 rounded-3xl bg-[#1c1815] border border-amber-500/20 space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-amber-100 font-outfit flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-amber-400" /> Recent Universal Inbox Entries
-            </h2>
-            <button
-              onClick={() => onNavigate('/inbox')}
-              className="text-xs text-amber-400 hover:underline"
-            >
-              Go to Inbox →
-            </button>
-          </div>
-
-          <div className="space-y-2">
-            {recentInbox.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => onNavigate('/inbox')}
-                className="p-3 rounded-2xl bg-[#12100e] border border-amber-500/15 flex items-center justify-between text-xs cursor-pointer hover:border-amber-500/40 transition"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full bg-amber-400" />
-                  <span className="text-amber-100 font-medium">{item.rawText}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  {item.aiExtraction && (
-                    <span className="px-2 py-0.5 rounded-full text-[10px] bg-amber-500/15 text-amber-300 font-semibold border border-amber-500/30">
-                      {item.aiExtraction.extractedCategory}
-                    </span>
-                  )}
-                  <span className="text-[10px] text-neutral-500">Approved</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* QUICK ACTIONS PANEL */}
-        <div className="p-5 rounded-3xl bg-[#1c1815] border border-amber-500/20 space-y-3">
-          <h2 className="text-base font-bold text-amber-100 font-outfit">Quick Life Actions</h2>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <button
-              onClick={onOpenQuickAdd}
-              className="p-3 rounded-2xl bg-[#12100e] border border-amber-500/20 hover:border-amber-500/50 text-amber-200 text-left transition font-medium flex flex-col justify-between"
-            >
-              <DollarSign className="w-4 h-4 text-emerald-400 mb-1" />
-              <span>+ Add Expense</span>
-            </button>
-            <button
-              onClick={onOpenQuickAdd}
-              className="p-3 rounded-2xl bg-[#12100e] border border-amber-500/20 hover:border-amber-500/50 text-amber-200 text-left transition font-medium flex flex-col justify-between"
-            >
-              <Clock className="w-4 h-4 text-amber-400 mb-1" />
-              <span>+ Log Time</span>
-            </button>
-            <button
-              onClick={() => onNavigate('/finance/consumption')}
-              className="p-3 rounded-2xl bg-[#12100e] border border-amber-500/20 hover:border-amber-500/50 text-amber-200 text-left transition font-medium flex flex-col justify-between"
-            >
-              <Sparkles className="w-4 h-4 text-orange-400 mb-1" />
-              <span>+ Consumption</span>
-            </button>
-            <button
-              onClick={() => onNavigate('/journal')}
-              className="p-3 rounded-2xl bg-[#12100e] border border-amber-500/20 hover:border-amber-500/50 text-amber-200 text-left transition font-medium flex flex-col justify-between"
-            >
-              <BookOpen className="w-4 h-4 text-purple-400 mb-1" />
-              <span>+ Write Journal</span>
-            </button>
           </div>
         </div>
       </div>

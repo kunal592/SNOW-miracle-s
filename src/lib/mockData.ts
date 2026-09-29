@@ -11,12 +11,22 @@ import {
   HealthEntry,
   Goal,
   Milestone,
-  Checkpoint,
   JournalEntry,
   Category,
-  Notification
+  Notification,
+  CognitiveQuestion,
+  CognitiveAttempt,
+  CognitiveProfile,
+  AIInsight,
+  AIRecommendation,
+  AIMemory,
+  AIActivity,
+  MilestonePaceAnalysis,
+  DailyBrief,
+  WeeklyReview
 } from '../types';
 
+// EXISTING BASE MOCK DATA
 export const initialUser: User = {
   id: 'usr_001',
   name: 'Kunal',
@@ -695,174 +705,6 @@ export const initialInboxEntries: InboxEntry[] = [
       aiExplanation: 'Direct cash food expenditure.',
       suggestedAction: 'Log Food'
     }
-  },
-  {
-    id: 'inb_6',
-    timestamp: '2026-09-28T21:00:00Z',
-    rawText: 'Slept at 23:30 and woke up at 06:38, 2.8L water',
-    status: 'Approved',
-    aiExtraction: {
-      id: 'ai_6',
-      rawText: 'Slept at 23:30 and woke up at 06:38',
-      extractedCategory: 'Health',
-      extractedTimeHours: 7.1,
-      isConsumption: false,
-      confidenceScore: 94,
-      aiExplanation: 'Health metric entry: calculated 7.1 hours sleep duration.',
-      suggestedAction: 'Log Health'
-    }
-  },
-  {
-    id: 'inb_7',
-    timestamp: '2026-09-28T19:30:00Z',
-    rawText: 'Herbal shampoo ₹450 expected to last 30 days',
-    status: 'Needs Review',
-    aiExtraction: {
-      id: 'ai_7',
-      rawText: 'Herbal shampoo ₹450 expected to last 30 days',
-      extractedCategory: 'Personal Care',
-      extractedAmount: 450,
-      extractedDurationDays: 30,
-      isConsumption: true,
-      dailyAllocationCost: 15.00,
-      confidenceScore: 96,
-      aiExplanation: 'Personal care item. Categorized with ₹15/day daily cost allocation.',
-      suggestedAction: 'Create Consumption'
-    }
-  },
-  {
-    id: 'inb_8',
-    timestamp: '2026-09-28T14:00:00Z',
-    rawText: 'Spent 1.2 hours on Instagram reels after lunch',
-    status: 'Needs Review',
-    aiExtraction: {
-      id: 'ai_8',
-      rawText: 'Spent 1.2 hours on Instagram',
-      extractedCategory: 'Entertainment',
-      extractedTimeHours: 1.2,
-      isConsumption: false,
-      confidenceScore: 91,
-      aiExplanation: 'Screen time distraction logged.',
-      suggestedAction: 'Log Time'
-    }
-  },
-  {
-    id: 'inb_9',
-    timestamp: '2026-09-27T18:00:00Z',
-    rawText: 'Finished React dashboard prototype for SNOW OS',
-    status: 'Approved',
-    aiExtraction: {
-      id: 'ai_9',
-      rawText: 'Finished React dashboard prototype',
-      extractedCategory: 'Learning',
-      extractedTimeHours: 3.5,
-      isConsumption: false,
-      confidenceScore: 98,
-      aiExplanation: 'Project milestone task completed.',
-      suggestedAction: 'Log Learning'
-    }
-  },
-  {
-    id: 'inb_10',
-    timestamp: '2026-09-27T07:30:00Z',
-    rawText: 'Went to gym - 45 min upper body push session',
-    status: 'Approved',
-    aiExtraction: {
-      id: 'ai_10',
-      rawText: 'Went to gym',
-      extractedCategory: 'Health',
-      extractedTimeHours: 0.75,
-      isConsumption: false,
-      confidenceScore: 99,
-      aiExplanation: 'Workout session recorded.',
-      suggestedAction: 'Log Health'
-    }
-  },
-  {
-    id: 'inb_11',
-    timestamp: '2026-09-26T20:00:00Z',
-    rawText: 'Paid ₹1,700 monthly house rent',
-    status: 'Approved',
-    aiExtraction: {
-      id: 'ai_11',
-      rawText: 'Paid ₹1,700 rent',
-      extractedCategory: 'Housing',
-      extractedAmount: 1700,
-      extractedDurationDays: 30,
-      isConsumption: true,
-      dailyAllocationCost: 56.67,
-      confidenceScore: 99,
-      aiExplanation: 'Monthly housing rental expense.',
-      suggestedAction: 'Create Consumption'
-    }
-  },
-  {
-    id: 'inb_12',
-    timestamp: '2026-09-25T16:00:00Z',
-    rawText: 'Cold pressed olive oil ₹650 for cooking, 40 days supply',
-    status: 'Needs Review',
-    aiExtraction: {
-      id: 'ai_12',
-      rawText: 'Cold pressed olive oil ₹650',
-      extractedCategory: 'Food',
-      extractedAmount: 650,
-      extractedDurationDays: 40,
-      isConsumption: true,
-      dailyAllocationCost: 16.25,
-      confidenceScore: 94,
-      aiExplanation: 'Pantry oil supply allocation ₹16.25/day.',
-      suggestedAction: 'Create Consumption'
-    }
-  },
-  {
-    id: 'inb_13',
-    timestamp: '2026-09-24T10:00:00Z',
-    rawText: 'Spent ₹250 on Python technical eBook download',
-    status: 'Approved',
-    aiExtraction: {
-      id: 'ai_13',
-      rawText: 'Spent ₹250 on Python eBook',
-      extractedCategory: 'Learning',
-      extractedAmount: 250,
-      isConsumption: false,
-      confidenceScore: 96,
-      aiExplanation: 'Educational resource purchase.',
-      suggestedAction: 'Create Expense'
-    }
-  },
-  {
-    id: 'inb_14',
-    timestamp: '2026-09-23T11:00:00Z',
-    rawText: 'Refilled coffee beans 500g ₹480',
-    status: 'Needs Review',
-    aiExtraction: {
-      id: 'ai_14',
-      rawText: 'Refilled coffee beans ₹480',
-      extractedCategory: 'Food',
-      extractedAmount: 480,
-      extractedDurationDays: 15,
-      isConsumption: true,
-      dailyAllocationCost: 32.00,
-      confidenceScore: 93,
-      aiExplanation: 'Coffee supplies daily cost ₹32/day.',
-      suggestedAction: 'Create Consumption'
-    }
-  },
-  {
-    id: 'inb_15',
-    timestamp: '2026-09-22T08:30:00Z',
-    rawText: 'Morning 5km run completed in 26 minutes',
-    status: 'Approved',
-    aiExtraction: {
-      id: 'ai_15',
-      rawText: 'Morning 5km run',
-      extractedCategory: 'Health',
-      extractedTimeHours: 0.43,
-      isConsumption: false,
-      confidenceScore: 98,
-      aiExplanation: 'Outdoor running workout entry.',
-      suggestedAction: 'Log Health'
-    }
   }
 ];
 
@@ -888,39 +730,6 @@ export const initialJournalEntries: JournalEntry[] = [
     whatWentWrong: 'Spent 1.2 hours on social media after lunch.',
     tomorrowPriority: 'Launch Winter Arc Day 1 protocol with 100% focus.',
     tags: ['PreArc', 'Preparation']
-  },
-  {
-    id: 'j_3',
-    date: '2026-09-27',
-    moodRating: 9,
-    energyRating: 9,
-    whatHappened: 'Leg day workout in morning. Completed Docker & container security learning session.',
-    whatWentWell: 'High energy throughout the day. Perfect meal prep adherence.',
-    whatWentWrong: 'None.',
-    tomorrowPriority: 'Finalize TypeScript schema definitions.',
-    tags: ['Workout', 'DevOps']
-  },
-  {
-    id: 'j_4',
-    date: '2026-09-26',
-    moodRating: 7,
-    energyRating: 7,
-    whatHappened: 'Long work sprint delivering client features.',
-    whatWentWell: 'Shipped all assigned tasks before deadline.',
-    whatWentWrong: 'Felt tired in evening due to shorter sleep night before.',
-    tomorrowPriority: 'Prioritize recovery sleep and 7.5 hours duration.',
-    tags: ['WorkSprint']
-  },
-  {
-    id: 'j_5',
-    date: '2026-09-25',
-    moodRating: 8,
-    energyRating: 8,
-    whatHappened: 'Python Async Deep Dive session. Bought high quality olive oil for meal prep.',
-    whatWentWell: 'Grasped Python asyncio task queues effortlessly.',
-    whatWentWrong: 'A bit late on dinner routine.',
-    tomorrowPriority: 'Sprint delivery prep.',
-    tags: ['Learning', 'Python']
   }
 ];
 
@@ -942,23 +751,416 @@ export const initialNotifications: Notification[] = [
     isRead: false,
     type: 'inbox',
     actionRoute: '/inbox/review'
+  }
+];
+
+// ==========================================
+// NEW COGNITIVE LAB & AI SUPERVISOR MOCK DATA
+// ==========================================
+
+export const initialCognitiveQuestions: CognitiveQuestion[] = [
+  {
+    id: 'cq_1',
+    category: 'Logical',
+    difficulty: 2,
+    question: 'You have 3 light switches outside a closed room. Inside the room are 3 incandescent light bulbs. You can enter the room only once. How can you determine with 100% certainty which switch controls which bulb?',
+    hints: [
+      'Think about something besides whether the light bulb is currently ON or OFF.',
+      'Light bulbs produce more than just light when active.',
+      'Consider the thermal properties (heat/temperature) of the glass bulb.'
+    ],
+    correctAnswer: 'Turn switch 1 ON for 10 minutes, turn it OFF, turn switch 2 ON, enter room. Warm unlit bulb is switch 1, lit bulb is switch 2, cold unlit is switch 3.',
+    explanation: 'By leveraging the thermal state (temperature) as a second observable physical variable alongside the binary optical state (light/dark), you isolate 3 distinct states (Lit/Cold, Unlit/Warm, Unlit/Cold) with only a single entry into the room.',
+    skills: ['Physical Deduction', 'Hidden Variable Discovery', 'State Reduction'],
+    estimatedTimeMins: 5
   },
   {
-    id: 'n_3',
-    title: 'Petrol Consumption Allocation Active',
-    message: '₹200 petrol refill allocated at ₹66.67/day for the next 3 days.',
+    id: 'cq_2',
+    category: 'Operational',
+    difficulty: 3,
+    contextData: 'Personal Finance Budget Allocation',
+    question: 'You have ₹13,000 total monthly income. Fixed compulsory commitments are ₹11,700 (Car EMI ₹10,000 + Rent ₹1,700). You need to allocate the remaining ₹1,300 across food, fuel, and emergency savings for 30 days. Which constraint must you prioritize first and why?',
+    hints: [
+      'Identify which expense item causes immediate failure if depleted versus delayed adjustment.',
+      'Consider basic biological survival vs vehicle mobility.',
+      'Compare fixed daily food consumption cost (₹16/day) against fuel reserves.'
+    ],
+    correctAnswer: 'Prioritize essential food sustenance minimums first, followed by essential commute fuel required to earn the ₹13,000 income, deferring liquid emergency savings until income expands.',
+    explanation: 'Operational reasoning requires ordering dependencies by failure severity. Depleting food halts physical function; depleting fuel halts income generation. Savings are a secondary buffer that cannot exist without net positive operational cash flow.',
+    skills: ['Resource Allocation', 'Dependency Ordering', 'Risk Mitigation'],
+    estimatedTimeMins: 6
+  },
+  {
+    id: 'cq_3',
+    category: 'Analytical',
+    difficulty: 2,
+    question: 'A petrol refill costs ₹200 for 2.0 litres and lasts 3 days. A 5kg bag of rice costs ₹320 and lasts 20 days. Which item places a higher daily cost drain on your cash flow, and by how much?',
+    hints: [
+      'Calculate the daily cost for petrol: ₹200 / 3 days.',
+      'Calculate the daily cost for rice: ₹320 / 20 days.',
+      'Subtract the daily cost of rice from the daily cost of petrol.'
+    ],
+    correctAnswer: 'Petrol costs ₹66.67/day while Rice costs ₹16.00/day. Petrol places a higher daily cost drain by ₹50.67/day.',
+    explanation: 'Daily cost allocation = Total Amount / Duration. Petrol = ₹200 / 3 = ₹66.67/day. Rice = ₹320 / 20 = ₹16.00/day. Variance = ₹66.67 - ₹16.00 = ₹50.67/day higher drain for petrol.',
+    skills: ['Ratio Analysis', 'Daily Cost Normalization', 'Cost Variance'],
+    estimatedTimeMins: 4
+  },
+  {
+    id: 'cq_4',
+    category: 'Critical',
+    difficulty: 3,
+    question: 'An article claims: "Engineers who sleep 8 hours a night complete 40% more code commits than those who sleep 6 hours. Therefore, sleeping 8 hours directly causes higher programming output." What critical flaw or unstated assumption exists in this claim?',
+    hints: [
+      'Distinguish between correlation (two things happening together) and causation (one causing the other).',
+      'Consider third variables such as workload stress, overall health, or experience level.',
+      'Could engineers with better work habits also manage their sleep schedule better?'
+    ],
+    correctAnswer: 'Confusing correlation with causation. Better organized or less burnt-out engineers may naturally sleep 8 hours AND write more code due to superior work systems, rather than sleep duration alone driving the output.',
+    explanation: 'A correlation between sleep and commit volume does not establish direct causation. Confounding variables (e.g. time management skill, project complexity, lower stress levels) can drive both health recovery and output velocity.',
+    skills: ['Correlation vs Causation', 'Flawed Assumption Detection', 'Confounder Isolation'],
+    estimatedTimeMins: 5
+  },
+  {
+    id: 'cq_5',
+    category: 'Systems Thinking',
+    difficulty: 4,
+    question: 'You increase your daily AI learning target from 1 hour to 3 hours, but keep your sleep duration fixed at 7 hours and work hours fixed at 8 hours. Over 2 weeks, your deep work productivity drops by 35%. What feedback loop explains this systemic failure?',
+    hints: [
+      'Look at what non-work non-sleep time block was squeezed to accommodate the extra 2 hours of learning.',
+      'Consider cognitive fatigue, relaxation recovery, and mental bandwidth limits.',
+      'Squeezing recovery time creates cumulative fatigue that degrades deep focus efficiency.'
+    ],
+    correctAnswer: 'Negative feedback loop due to cognitive overload and recovery starvation. Sacrificing relaxation and buffer time increases cognitive fatigue, lowering mental focus efficiency during deep work blocks.',
+    explanation: 'Systems operate within capacity limits. Forcing 3 hours of intense study without expanding total available energy or buffer space drains cognitive reserves, creating a negative feedback loop where total output drops despite higher input hours.',
+    skills: ['Feedback Loop Analysis', 'Cognitive Capacity Limits', 'Second-Order Effects'],
+    estimatedTimeMins: 7
+  },
+  {
+    id: 'cq_6',
+    category: 'Observational',
+    difficulty: 1,
+    question: 'Inspect these two logged time blocks: Block A: 09:00 to 12:40 (220 mins). Block B: 13:30 to 17:00 (210 mins). Which block contains a longer continuous deep work session and by how many minutes?',
+    hints: [
+      'Calculate duration of Block A in minutes.',
+      'Calculate duration of Block B in minutes.',
+      'Subtract Block B duration from Block A duration.'
+    ],
+    correctAnswer: 'Block A is 220 minutes while Block B is 210 minutes. Block A is longer by 10 minutes.',
+    explanation: 'Block A = 3h 40m = 220 mins. Block B = 3h 30m = 210 mins. Block A exceeds Block B by 10 minutes.',
+    skills: ['Pattern Inspection', 'Inconsistency Detection', 'Data Comparison'],
+    estimatedTimeMins: 2
+  },
+  {
+    id: 'cq_7',
+    category: 'Numerical',
+    difficulty: 2,
+    question: 'Your vehicle odometer read 82,275 km on Sep 15 and 82,340 km on Sep 22. You refilled 2.0 litres of fuel for ₹200. What was your mileage in km/L and cost per km?',
+    hints: [
+      'Distance = 82,340 - 82,275 = 65 km.',
+      'Mileage = Distance / Litres = 65 / 2.0.',
+      'Cost/km = Amount / Distance = 200 / 65.'
+    ],
+    correctAnswer: 'Mileage was 32.5 km/L and Cost per km was ₹3.08/km.',
+    explanation: 'Distance = 65 km. Mileage = 65 / 2.0 = 32.5 km/L. Cost per km = ₹200 / 65 = ₹3.076 ≈ ₹3.08/km.',
+    skills: ['Rate Calculation', 'Unit Economics', 'Efficiency Analysis'],
+    estimatedTimeMins: 3
+  },
+  {
+    id: 'cq_8',
+    category: 'Problem Solving',
+    difficulty: 3,
+    question: 'You need to transfer 4 liters of water from a tap, but you only have a 3-liter bucket and a 5-liter bucket with no measurement markings. How can you measure exactly 4 liters?',
+    hints: [
+      'Fill the 5-liter bucket completely.',
+      'Pour from the 5-liter bucket into the 3-liter bucket until full.',
+      'Empty the 3-liter bucket, transfer the remaining 2 liters from the 5-liter bucket, fill the 5-liter bucket again, and pour into 3-liter bucket until full.'
+    ],
+    correctAnswer: 'Fill 5L bucket, pour into 3L bucket (leaving 2L in 5L). Empty 3L bucket. Pour the 2L into 3L bucket. Fill 5L bucket again. Pour into 3L bucket until full (takes 1L). Exactly 4L remains in the 5L bucket.',
+    explanation: 'Sequential volume transfer utilizes capacity boundaries to isolate volume remainders: 5L - 3L = 2L remainder. 3L capacity - 2L = 1L available. 5L - 1L = 4L exact measurement.',
+    skills: ['Algorithmic Step Resolution', 'Boundary Constraints', 'State Progression'],
+    estimatedTimeMins: 5
+  },
+  {
+    id: 'cq_9',
+    category: 'Logical',
+    difficulty: 4,
+    question: 'Four team members (Alice, Bob, Carol, Dave) are working on 4 distinct modules (AI, PWA, Fuel, Goals). Alice does not work on AI or Goals. Bob works on PWA. Dave does not work on Goals. Which module does Carol work on?',
+    hints: [
+      'Bob is fixed to PWA.',
+      'Alice cannot do AI, PWA, or Goals, so Alice must do Fuel.',
+      'Dave cannot do Goals, PWA, or Fuel, so Dave must do AI. This leaves Carol for Goals.'
+    ],
+    correctAnswer: 'Carol works on Goals.',
+    explanation: 'Matrix elimination: Bob = PWA. Alice cannot be AI, Goals, or PWA, so Alice = Fuel. Dave cannot be Goals, PWA, or Fuel, so Dave = AI. Remaining module Goals belongs to Carol.',
+    skills: ['Constraint Grid Elimination', 'Deductive Logic', 'Exclusion Processing'],
+    estimatedTimeMins: 6
+  },
+  {
+    id: 'cq_10',
+    category: 'Critical',
+    difficulty: 3,
+    contextData: 'Learning Velocity Audit',
+    question: 'A user claims: "I studied PyTorch for 3 hours yesterday because I had my laptop open for 3 hours during the evening." Why is "laptop open duration" a flawed metric for measuring actual learning depth?',
+    hints: [
+      'Passive time exposure does not equal active cognitive engagement.',
+      'Consider context switching, notifications, and idle background tabs.',
+      'True deep work requires focused practice, not just elapsed screen time.'
+    ],
+    correctAnswer: 'Elapsed open-screen duration conflates passive presence with active cognitive processing. Interruptions, tab switching, and idle reading inflate time without producing skill acquisition.',
+    explanation: 'Input metrics (open screen time) do not measure active practice output (code written, concepts recalled, problems solved). High noise and distraction degrade efficiency.',
+    skills: ['Metric Validity Check', 'Signal vs Noise', 'Output Verification'],
+    estimatedTimeMins: 4
+  }
+];
+
+export const initialCognitiveAttempts: CognitiveAttempt[] = [
+  {
+    id: 'ca_1',
+    questionId: 'cq_1',
+    startedAt: '2026-09-29T18:00:00Z',
+    completedAt: '2026-09-29T18:04:30Z',
+    timeTakenSecs: 270,
+    userAnswer: 'Turn switch 1 on for 10 minutes, turn off, turn switch 2 on, go in room. Feel which unlit bulb is hot.',
+    isCorrect: true,
+    isAssisted: false,
+    hintsRequested: 0,
+    attemptsCount: 1,
+    reasoningScore: 9,
+    aiFeedback: {
+      verdict: 'Correct',
+      qualityScore: 9,
+      whatWentWell: ['Identified heat as thermal variable', 'Independent solve without hints', 'Minimal state visits'],
+      whatCouldImprove: ['Could explicitly detail switch 3 cold state'],
+      detailedReasoning: 'Excellent independent deduction. You correctly leveraged thermal energy as a second observable state to solve the single-entry constraint.'
+    }
+  },
+  {
+    id: 'ca_2',
+    questionId: 'cq_3',
+    startedAt: '2026-09-28T20:00:00Z',
+    completedAt: '2026-09-28T20:03:10Z',
+    timeTakenSecs: 190,
+    userAnswer: 'Petrol costs ₹66.67/day and Rice costs ₹16/day. Petrol is higher by ₹50.67/day.',
+    isCorrect: true,
+    isAssisted: false,
+    hintsRequested: 0,
+    attemptsCount: 1,
+    reasoningScore: 10,
+    aiFeedback: {
+      verdict: 'Correct',
+      qualityScore: 10,
+      whatWentWell: ['Flawless arithmetic division', 'Precise daily cost normalization'],
+      whatCouldImprove: [],
+      detailedReasoning: 'Perfect calculation. You correctly normalized total cash outlays over their respective consumption durations to find daily variance.'
+    }
+  }
+];
+
+export const initialCognitiveProfile: CognitiveProfile = {
+  level: 2.4,
+  streakDays: 4,
+  totalSolved: 14,
+  independentSolves: 11,
+  assistedSolves: 3,
+  averageSolveTimeSecs: 215,
+  averageReasoningScore: 8.2,
+  trainingPerformanceIndex: {
+    Logical: 74,
+    Analytical: 68,
+    Critical: 62,
+    Operational: 78,
+    Observational: 85,
+    Numerical: 71,
+    'Systems Thinking': 58,
+    'Problem Solving': 76
+  },
+  skillLevels: {
+    Logical: 2.8,
+    Analytical: 2.4,
+    Critical: 2.1,
+    Operational: 2.7,
+    Observational: 3.2,
+    Numerical: 2.5,
+    'Systems Thinking': 1.9,
+    'Problem Solving': 2.6
+  }
+};
+
+export const initialAIInsights: AIInsight[] = [
+  {
+    id: 'aii_1',
+    title: 'Instagram Screen Time vs. Evening Learning Block',
+    module: 'Time',
+    confidenceLevel: 'High',
+    confidenceReason: 'Based on 14 consecutive days of verified time logs.',
+    fact: 'Over the last 14 days, entertainment screen time averaged 1h 37m/day while AI Learning averaged 58m/day.',
+    interpretation: 'Evening entertainment blocks frequently precede delayed learning starts or shortened study sessions.',
+    hypothesis: 'Post-lunch and late afternoon phone usage reduces energy reserves available for evening deep work.',
+    recommendation: 'Try scheduling your planned 90-minute AI learning session immediately after dinner before opening social media apps.',
+    underlyingData: [
+      { metric: 'Avg Screen Time', value: '1h 37m/day', previousValue: '1h 12m/day' },
+      { metric: 'Avg AI Learning', value: '58m/day', previousValue: '1h 24m/day' }
+    ],
+    createdAt: '2026-09-29T19:00:00Z'
+  },
+  {
+    id: 'aii_2',
+    title: 'Cash Outflow Spikes vs. Smooth Daily Consumption',
+    module: 'Finance',
+    confidenceLevel: 'High',
+    confidenceReason: 'Based on 20 logged expenses and 10 active consumption allocations.',
+    fact: 'Cash outflow spiked to ₹2,800 on Sep 20 for Whey Protein, but daily consumption accounting allocates it at ₹93.33/day.',
+    interpretation: 'Lump-sum upfront purchases create short-term cash flow tightness even though daily operational cost remains steady.',
+    hypothesis: 'Staggering multi-day supply refills across different pay cycles will maintain higher liquid cash reserves.',
+    recommendation: 'Maintain an outstanding allocation buffer of ₹2,500 to absorb upfront bulk purchases without touching emergency reserves.',
+    underlyingData: [
+      { metric: 'Cash Outflow 30D', value: '₹8,420' },
+      { metric: 'Daily Consumption Cost', value: '₹347/day' }
+    ],
+    createdAt: '2026-09-29T18:30:00Z'
+  },
+  {
+    id: 'aii_3',
+    title: 'Sleep Duration & Next-Day Deep Work Efficiency',
+    module: 'Health',
+    confidenceLevel: 'Moderate',
+    confidenceReason: 'Based on 10 health logs cross-referenced with time logs.',
+    fact: 'On days with sleep >= 7.2 hours, deep work duration averaged 3h 50m. On days with sleep < 6.5 hours, deep work averaged 2h 10m.',
+    interpretation: 'Sub-7-hour sleep nights coincide with a 43% decline in deep work concentration span.',
+    hypothesis: 'Sleep debt creates attention fragmentation during morning code architecture tasks.',
+    recommendation: 'Enforce a strict 22:30 screen shutdown rule to preserve 7.5 hours of sleep window.',
+    underlyingData: [
+      { metric: 'Deep Work (Sleep >= 7.2h)', value: '3h 50m' },
+      { metric: 'Deep Work (Sleep < 6.5h)', value: '2h 10m' }
+    ],
+    createdAt: '2026-09-28T09:00:00Z'
+  }
+];
+
+export const initialAIRecommendations: AIRecommendation[] = [
+  {
+    id: 'air_1',
+    title: 'Increase Daily AI Learning Pace by 38 Mins',
+    description: 'Your October 15 Checkpoint requires 30 hours of AI Engineering. You are currently at 18 hours. Increasing daily pace from 1h 05m to 1h 43m will guarantee on-time completion.',
+    priority: 'High',
+    actionRoute: '/learning',
+    actionLabel: 'Adjust Learning Plan'
+  },
+  {
+    id: 'air_2',
+    title: 'Review 3 Pending Universal Inbox Entries',
+    description: 'Unprocessed inbox entries delay consumption daily cost updates and expense reporting.',
+    priority: 'Medium',
+    actionRoute: '/inbox/review',
+    actionLabel: 'Review Queue'
+  },
+  {
+    id: 'air_3',
+    title: 'Complete Daily Cognitive Lab Challenge',
+    description: 'Solve today\'s Logical Reasoning challenge to maintain your 4-day cognitive training streak.',
+    priority: 'Medium',
+    actionRoute: '/cognitive',
+    actionLabel: 'Start Challenge'
+  }
+];
+
+export const initialMilestonePaceAnalysis: MilestonePaceAnalysis[] = [
+  {
+    milestoneId: 'ms_1',
+    milestoneTitle: 'Winter Arc Protocol Checkpoint #1',
+    targetHours: 30,
+    currentHours: 18,
+    progressPercent: 60,
+    daysRemaining: 16,
+    requiredDailyPace: '1h 43m/day',
+    actualRecentPace: '1h 05m/day',
+    status: 'Pace Increase Required',
+    aiObservation: 'You have completed 18 of 30 target AI study hours (60%). However, your recent 7-day average of 1h 05m/day falls short of the 1h 43m/day required for the remaining 16 days.',
+    suggestedAction: 'Increase Daily Pace'
+  }
+];
+
+export const initialDailyBrief: DailyBrief = {
+  id: 'db_1',
+  date: '2026-09-29',
+  todayFocus: 'Protecting your planned 90-minute AI Engineering learning block.',
+  whyFocus: 'You logged 2h 10m of learning yesterday but spent 1h 42m on social media distractions after lunch.',
+  evidenceText: 'Tracked data shows post-lunch entertainment screen time was 2.3x higher than morning deep work breaks.',
+  todayChallengeId: 'cq_1',
+  todayChallengeTitle: 'Logical Reasoning: Switch & Bulb Isolation',
+  upcomingMilestoneTitle: 'Winter Arc Protocol Checkpoint #1 (Oct 15)'
+};
+
+export const initialWeeklyReview: WeeklyReview = {
+  id: 'wr_1',
+  weekLabel: 'Sep 22 – Sep 28',
+  challengesCompleted: 7,
+  independentSolves: 5,
+  assistedSolves: 2,
+  averageReasoningScore: 8.1,
+  strongestSkill: 'Observational',
+  weakestSkill: 'Critical',
+  weeklyPattern: 'You tend to solve numerical and observational problems quickly (avg 2.5 mins), but request hints earlier on multi-constraint critical reasoning questions.',
+  suggestedFocusNextWeek: 'Critical',
+  suggestedChallengeMix: [
+    { category: 'Critical', percent: 40 },
+    { category: 'Logical', percent: 25 },
+    { category: 'Operational', percent: 20 },
+    { category: 'Observational', percent: 15 }
+  ]
+};
+
+export const initialAIMemories: AIMemory[] = [
+  {
+    id: 'aim_1',
+    category: 'Goals',
+    memoryText: 'Primary Winter Arc objective is completing 100 hours of AI Engineering & Master PyTorch fine-tuning by Nov 30.',
+    confidence: 99,
+    createdAt: '2026-09-29T08:00:00Z'
+  },
+  {
+    id: 'aim_2',
+    category: 'Financial Rules',
+    memoryText: 'Petrol refills ₹200 are expected to last 3 days (allocated at ₹66.67/day).',
+    confidence: 98,
+    createdAt: '2026-09-29T19:30:00Z'
+  },
+  {
+    id: 'aim_3',
+    category: 'Preferences',
+    memoryText: 'Prefers morning deep work blocks between 09:00 and 12:30 without phone distractions.',
+    confidence: 95,
+    createdAt: '2026-09-28T10:00:00Z'
+  }
+];
+
+export const initialAIActivityLogs: AIActivity[] = [
+  {
+    id: 'aia_1',
+    timestamp: '2026-09-29T20:30:00Z',
+    action: 'Analyzed today\'s time entries and deep work duration.',
+    module: 'Time',
+    details: 'Logged 3h 40m deep work and 2h 10m learning sessions.'
+  },
+  {
+    id: 'aia_2',
     timestamp: '2026-09-29T19:30:00Z',
-    isRead: true,
-    type: 'consumption',
-    actionRoute: '/finance/consumption'
+    action: 'Parsed Universal Inbox entry for petrol refill.',
+    module: 'Inbox',
+    details: 'Auto-categorized as Transport → Fuel, ₹200 over 3 days (₹66.67/day).'
   },
   {
-    id: 'n_4',
-    title: 'Winter Arc Checkpoint #1 Upcoming',
-    message: 'October 15 Checkpoint is 16 days away. You are on track with AI Engineering.',
-    timestamp: '2026-09-28T09:00:00Z',
-    isRead: true,
-    type: 'checkpoint',
-    actionRoute: '/milestones'
+    id: 'aia_3',
+    timestamp: '2026-09-29T18:00:00Z',
+    action: 'Evaluated Cognitive Lab solution for Question #cq_1.',
+    module: 'Cognitive',
+    details: 'Graded independent solve with 9/10 reasoning score.'
+  },
+  {
+    id: 'aia_4',
+    timestamp: '2026-09-29T07:00:00Z',
+    action: 'Generated Daily AI Brief & Focus Recommendation.',
+    module: 'Supervisor',
+    details: 'Identified learning block protection as top daily focus.'
   }
 ];

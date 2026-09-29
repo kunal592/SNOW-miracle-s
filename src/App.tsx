@@ -14,9 +14,20 @@ import {
   Goal,
   Milestone,
   JournalEntry,
-  CategoryType
+  CategoryType,
+  CognitiveAttempt,
+  CognitiveProfile,
+  AIMemory,
+  AIActivity
 } from './types';
 import { Storage } from './lib/storage';
+import {
+  initialCognitiveQuestions,
+  initialAIRecommendations,
+  initialMilestonePaceAnalysis,
+  initialDailyBrief,
+  initialWeeklyReview
+} from './lib/mockData';
 import { AppShell } from './components/AppShell';
 import { ToastMessage } from './components/Toast';
 
@@ -40,6 +51,14 @@ import { ExportCenterView } from './views/ExportCenterView';
 import { SettingsView } from './views/SettingsView';
 import { MoreMenuView } from './views/MoreMenuView';
 
+// NEW COGNITIVE & AI VIEWS
+import { CognitiveLabView } from './views/CognitiveLabView';
+import { CognitiveProfileView } from './views/CognitiveProfileView';
+import { WeeklyThinkingReviewView } from './views/WeeklyThinkingReviewView';
+import { AICommandCenterView } from './views/AICommandCenterView';
+import { AIMemoryView } from './views/AIMemoryView';
+import { AIActivityLogView } from './views/AIActivityLogView';
+
 export function App() {
   const [currentRoute, setCurrentRoute] = useState<string>(() => {
     return window.location.pathname || '/';
@@ -59,6 +78,13 @@ export function App() {
   const [goals, setGoals] = useState<Goal[]>(() => Storage.getGoals());
   const [milestones, setMilestones] = useState<Milestone[]>(() => Storage.getMilestones());
   const [journal, setJournal] = useState<JournalEntry[]>(() => Storage.getJournal());
+
+  // Cognitive & AI state
+  const [cognitiveAttempts, setCognitiveAttempts] = useState<CognitiveAttempt[]>(() => Storage.getCognitiveAttempts());
+  const [cognitiveProfile, setCognitiveProfile] = useState<CognitiveProfile>(() => Storage.getCognitiveProfile());
+  const [aiMemories, setAIMemories] = useState<AIMemory[]>(() => Storage.getAIMemories());
+  const [aiActivityLogs, setAIActivityLogs] = useState<AIActivity[]>(() => Storage.getAIActivityLogs());
+  const [aiInsights] = useState(() => Storage.getAIInsights());
 
   // Toast System State
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
@@ -101,7 +127,6 @@ export function App() {
     setInbox(updatedInbox);
     Storage.setInbox(updatedInbox);
 
-    // If auto-approved consumption or expense, process into system
     if (extraction.confidenceScore >= 95) {
       if (extraction.isConsumption && extraction.extractedAmount && extraction.dailyAllocationCost) {
         const newCons: ConsumptionExpense = {
@@ -251,6 +276,45 @@ export function App() {
     Storage.setUser(newUser);
   };
 
+  // COGNITIVE & AI MUTATIONS
+  const handleSaveCognitiveAttempt = (attempt: CognitiveAttempt) => {
+    const updatedAttempts = [attempt, ...cognitiveAttempts];
+    setCognitiveAttempts(updatedAttempts);
+    Storage.setCognitiveAttempts(updatedAttempts);
+
+    // Update cognitive profile scores
+    const newProf: CognitiveProfile = {
+      ...cognitiveProfile,
+      totalSolved: cognitiveProfile.totalSolved + 1,
+      independentSolves: attempt.isAssisted ? cognitiveProfile.independentSolves : cognitiveProfile.independentSolves + 1,
+      assistedSolves: attempt.isAssisted ? cognitiveProfile.assistedSolves + 1 : cognitiveProfile.assistedSolves,
+      streakDays: cognitiveProfile.streakDays + 1
+    };
+    setCognitiveProfile(newProf);
+    Storage.setCognitiveProfile(newProf);
+
+    handleShowToast(
+      attempt.isCorrect
+        ? `🎉 Challenge solved! Reasoning Score: ${attempt.reasoningScore}/10`
+        : 'Attempt recorded. Review feedback below.',
+      attempt.isCorrect ? 'success' : 'info'
+    );
+  };
+
+  const handleAddAIMemory = (memory: AIMemory) => {
+    const updated = [memory, ...aiMemories];
+    setAIMemories(updated);
+    Storage.setAIMemories(updated);
+    handleShowToast('AI Memory rule saved', 'success');
+  };
+
+  const handleDeleteAIMemory = (id: string) => {
+    const updated = aiMemories.filter((m) => m.id !== id);
+    setAIMemories(updated);
+    Storage.setAIMemories(updated);
+    handleShowToast('AI Memory deleted', 'info');
+  };
+
   const unreadReviewCount = inbox.filter((i) => i.status === 'Needs Review' || i.status === 'Raw').length;
 
   // View routing switch
@@ -270,7 +334,53 @@ export function App() {
             goals={goals}
             milestones={milestones}
             inbox={inbox}
+            dailyBrief={initialDailyBrief}
           />
+        );
+      case '/cognitive':
+        return (
+          <CognitiveLabView
+            questions={initialCognitiveQuestions}
+            attempts={cognitiveAttempts}
+            onSaveAttempt={handleSaveCognitiveAttempt}
+            onNavigate={handleNavigate}
+          />
+        );
+      case '/cognitive/profile':
+        return (
+          <CognitiveProfileView
+            profile={cognitiveProfile}
+            onNavigate={handleNavigate}
+          />
+        );
+      case '/cognitive/review':
+        return (
+          <WeeklyThinkingReviewView
+            weeklyReview={initialWeeklyReview}
+            onNavigate={handleNavigate}
+          />
+        );
+      case '/ai':
+        return (
+          <AICommandCenterView
+            dailyBrief={initialDailyBrief}
+            insights={aiInsights}
+            recommendations={initialAIRecommendations}
+            milestonePace={initialMilestonePaceAnalysis}
+            onNavigate={handleNavigate}
+          />
+        );
+      case '/ai/memory':
+        return (
+          <AIMemoryView
+            memories={aiMemories}
+            onAddMemory={handleAddAIMemory}
+            onDeleteMemory={handleDeleteAIMemory}
+          />
+        );
+      case '/ai/activity':
+        return (
+          <AIActivityLogView activityLogs={aiActivityLogs} />
         );
       case '/inbox':
         return (
@@ -403,6 +513,7 @@ export function App() {
             goals={goals}
             milestones={milestones}
             inbox={inbox}
+            dailyBrief={initialDailyBrief}
           />
         );
     }
