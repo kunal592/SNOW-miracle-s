@@ -1,24 +1,46 @@
 import React from 'react';
-import { Home, Inbox, Target, Plus, Menu } from 'lucide-react';
+import { Home, Inbox, Target, Plus, Menu, BookOpen, Clock, DollarSign } from 'lucide-react';
+import { WorkspacePreferences, ModuleId } from '../types';
 
 interface MobileBottomNavProps {
   currentRoute: string;
   onNavigate: (route: string) => void;
   onOpenQuickAdd: () => void;
   unreadInboxCount: number;
+  workspacePreferences?: WorkspacePreferences;
+}
+
+interface NavItem {
+  route: string;
+  label: string;
+  icon: any;
+  badge?: number;
+  isAction?: boolean;
 }
 
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   currentRoute,
   onNavigate,
   onOpenQuickAdd,
-  unreadInboxCount
+  unreadInboxCount,
+  workspacePreferences
 }) => {
-  const navItems = [
+  const enabledModules = workspacePreferences?.enabledModules;
+  const isEnabled = (m: ModuleId) => !enabledModules || enabledModules.includes(m);
+
+  // Dynamic 4th tab: Goals, or Learning, or Time, or Finance, depending on what is enabled
+  let fourthTab: NavItem = { route: '/goals', label: 'Goals', icon: Target };
+  if (!isEnabled('goals')) {
+    if (isEnabled('learning')) fourthTab = { route: '/learning', label: 'Learning', icon: BookOpen };
+    else if (isEnabled('time')) fourthTab = { route: '/track', label: 'Time', icon: Clock };
+    else if (isEnabled('finance')) fourthTab = { route: '/finance', label: 'Finance', icon: DollarSign };
+  }
+
+  const navItems: NavItem[] = [
     { route: '/', label: 'Home', icon: Home },
     { route: '/inbox', label: 'Inbox', icon: Inbox, badge: unreadInboxCount },
     { route: 'QUICK_ADD', label: 'Add', icon: Plus, isAction: true },
-    { route: '/goals', label: 'Goals', icon: Target },
+    fourthTab,
     { route: '/more', label: 'More', icon: Menu }
   ];
 

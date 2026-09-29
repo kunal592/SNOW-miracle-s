@@ -59,11 +59,18 @@ import { AICommandCenterView } from './views/AICommandCenterView';
 import { AIMemoryView } from './views/AIMemoryView';
 import { AIActivityLogView } from './views/AIActivityLogView';
 import { AIProfileImportView } from './views/AIProfileImportView';
+import { WorkspaceCustomizationView } from './views/WorkspaceCustomizationView';
 import { OnboardingImportModal } from './components/OnboardingImportModal';
+import { WorkspacePreferences } from './types';
 
 export function App() {
+  const [workspacePreferences, setWorkspacePreferences] = useState<WorkspacePreferences>(() =>
+    Storage.getWorkspacePreferences()
+  );
+
   const [currentRoute, setCurrentRoute] = useState<string>(() => {
-    return window.location.pathname || '/';
+    const defaultRoute = workspacePreferences.defaultView === 'home' ? '/' : `/${workspacePreferences.defaultView}`;
+    return window.location.pathname !== '/' ? window.location.pathname : defaultRoute;
   });
 
   // Main state synced with localStorage
@@ -343,6 +350,12 @@ export function App() {
             milestones={milestones}
             inbox={inbox}
             dailyBrief={initialDailyBrief}
+            workspacePreferences={workspacePreferences}
+            onCompleteWorkspaceSetup={() => {
+              const updated = { ...workspacePreferences, hasCompletedWorkspaceSetup: true };
+              setWorkspacePreferences(updated);
+              Storage.setWorkspacePreferences(updated);
+            }}
           />
         );
       case '/cognitive':
@@ -501,6 +514,18 @@ export function App() {
             onNavigate={handleNavigate}
           />
         );
+      case '/settings/workspace':
+        return (
+          <WorkspaceCustomizationView
+            preferences={workspacePreferences}
+            onUpdatePreferences={(newPrefs) => {
+              setWorkspacePreferences(newPrefs);
+              Storage.setWorkspacePreferences(newPrefs);
+            }}
+            onShowToast={handleShowToast}
+            onNavigate={handleNavigate}
+          />
+        );
       case '/settings/import':
         return (
           <AIProfileImportView
@@ -527,6 +552,7 @@ export function App() {
           <MoreMenuView
             onNavigate={handleNavigate}
             unreadReviewCount={unreadReviewCount}
+            workspacePreferences={workspacePreferences}
           />
         );
       default:
@@ -544,6 +570,12 @@ export function App() {
             milestones={milestones}
             inbox={inbox}
             dailyBrief={initialDailyBrief}
+            workspacePreferences={workspacePreferences}
+            onCompleteWorkspaceSetup={() => {
+              const updated = { ...workspacePreferences, hasCompletedWorkspaceSetup: true };
+              setWorkspacePreferences(updated);
+              Storage.setWorkspacePreferences(updated);
+            }}
           />
         );
     }
@@ -559,6 +591,7 @@ export function App() {
       onDismissToast={handleDismissToast}
       onShowToast={handleShowToast}
       inbox={inbox}
+      workspacePreferences={workspacePreferences}
       onAddUniversalDump={handleAddUniversalDump}
       onAddExpense={handleAddExpense}
       onAddLogTime={(data) => {

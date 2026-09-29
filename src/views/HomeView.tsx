@@ -27,7 +27,9 @@ import {
   Goal,
   Milestone,
   InboxEntry,
-  DailyBrief
+  DailyBrief,
+  WorkspacePreferences,
+  ModuleId
 } from '../types';
 import { formatCurrency, formatMinutes, calculateActiveDailyConsumptionCost } from '../lib/calculations';
 
@@ -44,6 +46,8 @@ interface HomeViewProps {
   milestones: Milestone[];
   inbox: InboxEntry[];
   dailyBrief: DailyBrief;
+  workspacePreferences?: WorkspacePreferences;
+  onCompleteWorkspaceSetup?: () => void;
 }
 
 export const HomeView: React.FC<HomeViewProps> = ({
@@ -58,8 +62,12 @@ export const HomeView: React.FC<HomeViewProps> = ({
   goals,
   milestones,
   inbox,
-  dailyBrief
+  dailyBrief,
+  workspacePreferences,
+  onCompleteWorkspaceSetup
 }) => {
+  const enabledModules = workspacePreferences?.enabledModules;
+  const isEnabled = (m: ModuleId) => !enabledModules || enabledModules.includes(m);
   const todayStr = '2026-09-29';
   const todayHealth = healthEntries.find((h) => h.date === todayStr) || healthEntries[0];
 
@@ -114,50 +122,86 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
       </div>
 
-      {/* AI DAILY BRIEF CARD */}
-      <div className="p-5 rounded-3xl bg-[#1c1815] border border-amber-500/30 shadow-xl space-y-3">
-        <div className="flex items-center justify-between border-b border-amber-500/15 pb-2.5">
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-amber-500/20 text-amber-400">
-              <Sparkles className="w-4 h-4 animate-pulse" />
+      {/* MAKE THIS YOUR OWN ONBOARDING BANNER */}
+      {workspacePreferences && !workspacePreferences.hasCompletedWorkspaceSetup && (
+        <div className="p-5 rounded-3xl bg-gradient-to-r from-amber-950 via-[#1c1815] to-orange-950 border border-amber-500/40 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-3 rounded-2xl bg-amber-500/20 text-amber-400 shrink-0">
+              <Sparkles className="w-6 h-6 animate-pulse" />
             </div>
-            <h2 className="text-base font-bold text-amber-100 font-outfit">AI DAILY BRIEF</h2>
-          </div>
-          <button
-            onClick={() => onNavigate('/ai')}
-            className="text-xs text-amber-400 hover:underline flex items-center gap-1"
-          >
-            Ask AI Supervisor →
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-          <div className="p-3 rounded-2xl bg-[#12100e] border border-amber-500/15 space-y-1">
-            <span className="font-bold text-amber-400 uppercase text-[10px]">Today's Focus:</span>
-            <p className="text-amber-100 font-semibold">{dailyBrief.todayFocus}</p>
-          </div>
-
-          <div className="p-3 rounded-2xl bg-[#12100e] border border-amber-500/15 space-y-1">
-            <span className="font-bold text-orange-400 uppercase text-[10px]">Evidence / Why:</span>
-            <p className="text-neutral-300">{dailyBrief.whyFocus}</p>
-          </div>
-
-          <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col justify-between">
             <div>
-              <span className="font-bold text-amber-300 uppercase text-[10px] block mb-0.5">Cognitive Challenge:</span>
-              <p className="text-amber-100 font-bold font-outfit truncate">{dailyBrief.todayChallengeTitle}</p>
+              <h2 className="text-base font-bold text-amber-100 font-outfit">MAKE THIS YOUR OWN</h2>
+              <p className="text-xs text-neutral-300 mt-0.5">
+                You currently have all modules enabled. Choose the areas you want in your personal workspace.
+              </p>
             </div>
+          </div>
+
+          <div className="flex items-center gap-2 self-start md:self-auto shrink-0">
             <button
-              onClick={() => onNavigate('/cognitive')}
-              className="mt-2 py-1.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-neutral-950 font-bold text-[11px] shadow flex items-center justify-center gap-1"
+              onClick={() => onNavigate('/settings/workspace')}
+              className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs shadow-lg shadow-amber-950/60 transition"
             >
-              Start Challenge <ArrowRight className="w-3 h-3" />
+              [ CUSTOMIZE NOW ]
+            </button>
+            <button
+              onClick={() => onCompleteWorkspaceSetup && onCompleteWorkspaceSetup()}
+              className="px-4 py-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-neutral-300 font-bold text-xs border border-stone-700 transition"
+            >
+              [ DO THIS LATER ]
             </button>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* TODAY SCORE & 4 CORE OS METRIC CARDS */}
+      {/* AI DAILY BRIEF CARD */}
+      {isEnabled('ai') && (
+        <div className="p-5 rounded-3xl bg-[#1c1815] border border-amber-500/30 shadow-xl space-y-3">
+          <div className="flex items-center justify-between border-b border-amber-500/15 pb-2.5">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-amber-500/20 text-amber-400">
+                <Sparkles className="w-4 h-4 animate-pulse" />
+              </div>
+              <h2 className="text-base font-bold text-amber-100 font-outfit">AI DAILY BRIEF</h2>
+            </div>
+            <button
+              onClick={() => onNavigate('/ai')}
+              className="text-xs text-amber-400 hover:underline flex items-center gap-1"
+            >
+              Ask AI Supervisor →
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+            <div className="p-3 rounded-2xl bg-[#12100e] border border-amber-500/15 space-y-1">
+              <span className="font-bold text-amber-400 uppercase text-[10px]">Today's Focus:</span>
+              <p className="text-amber-100 font-semibold">{dailyBrief.todayFocus}</p>
+            </div>
+
+            <div className="p-3 rounded-2xl bg-[#12100e] border border-amber-500/15 space-y-1">
+              <span className="font-bold text-orange-400 uppercase text-[10px]">Evidence / Why:</span>
+              <p className="text-neutral-300">{dailyBrief.whyFocus}</p>
+            </div>
+
+            {isEnabled('cognitive') && (
+              <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col justify-between">
+                <div>
+                  <span className="font-bold text-amber-300 uppercase text-[10px] block mb-0.5">Cognitive Challenge:</span>
+                  <p className="text-amber-100 font-bold font-outfit truncate">{dailyBrief.todayChallengeTitle}</p>
+                </div>
+                <button
+                  onClick={() => onNavigate('/cognitive')}
+                  className="mt-2 py-1.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-neutral-950 font-bold text-[11px] shadow flex items-center justify-center gap-1"
+                >
+                  Start Challenge <ArrowRight className="w-3 h-3" />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* TODAY SCORE & CORE OS METRIC CARDS */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         {/* DAY SCORE */}
         <div className="col-span-2 md:col-span-1 p-4 rounded-2xl bg-[#1c1815] border border-amber-500/20 shadow-md flex flex-col justify-between">
@@ -175,88 +219,96 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
 
         {/* TIME CARD */}
-        <div className="p-3.5 rounded-2xl bg-[#1c1815] border border-amber-500/20 shadow-md space-y-2">
-          <div className="flex items-center justify-between text-xs text-neutral-400">
-            <span className="font-semibold uppercase tracking-wider flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-amber-400" /> Time
-            </span>
+        {isEnabled('time') && (
+          <div className="p-3.5 rounded-2xl bg-[#1c1815] border border-amber-500/20 shadow-md space-y-2">
+            <div className="flex items-center justify-between text-xs text-neutral-400">
+              <span className="font-semibold uppercase tracking-wider flex items-center gap-1">
+                <Clock className="w-3.5 h-3.5 text-amber-400" /> Time
+              </span>
+            </div>
+            <div className="space-y-1 text-xs">
+              <div className="flex justify-between">
+                <span className="text-neutral-400">Deep Work</span>
+                <span className="font-bold text-amber-200">{formatMinutes(deepWorkMins)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-neutral-400">Learning</span>
+                <span className="font-bold text-emerald-300">{formatMinutes(learningMins)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-neutral-400">Screen Time</span>
+                <span className="font-bold text-rose-300">1h 42m</span>
+              </div>
+            </div>
           </div>
-          <div className="space-y-1 text-xs">
-            <div className="flex justify-between">
-              <span className="text-neutral-400">Deep Work</span>
-              <span className="font-bold text-amber-200">{formatMinutes(deepWorkMins)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-neutral-400">Learning</span>
-              <span className="font-bold text-emerald-300">{formatMinutes(learningMins)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-neutral-400">Screen Time</span>
-              <span className="font-bold text-rose-300">1h 42m</span>
-            </div>
-          </div>
-        </div>
+        )}
 
         {/* MONEY CARD */}
-        <div className="p-3.5 rounded-2xl bg-[#1c1815] border border-amber-500/20 shadow-md space-y-2">
-          <div className="flex items-center justify-between text-xs text-neutral-400">
-            <span className="font-semibold uppercase tracking-wider flex items-center gap-1">
-              <DollarSign className="w-3.5 h-3.5 text-emerald-400" /> Money
-            </span>
-          </div>
-          <div className="space-y-1 text-xs">
-            <div className="flex justify-between">
-              <span className="text-neutral-400">Cash Spent</span>
-              <span className="font-bold text-amber-100">{formatCurrency(cashSpentToday)}</span>
+        {isEnabled('finance') && (
+          <div className="p-3.5 rounded-2xl bg-[#1c1815] border border-amber-500/20 shadow-md space-y-2">
+            <div className="flex items-center justify-between text-xs text-neutral-400">
+              <span className="font-semibold uppercase tracking-wider flex items-center gap-1">
+                <DollarSign className="w-3.5 h-3.5 text-emerald-400" /> Money
+              </span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-neutral-400">Consumption</span>
-              <span className="font-bold text-orange-300">{formatCurrency(dailyConsumptionCost)}/d</span>
+            <div className="space-y-1 text-xs">
+              <div className="flex justify-between">
+                <span className="text-neutral-400">Cash Spent</span>
+                <span className="font-bold text-amber-100">{formatCurrency(cashSpentToday)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-neutral-400">Consumption</span>
+                <span className="font-bold text-orange-300">{formatCurrency(dailyConsumptionCost)}/d</span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* BODY / HEALTH */}
-        <div className="p-3.5 rounded-2xl bg-[#1c1815] border border-amber-500/20 shadow-md space-y-2">
-          <div className="flex items-center justify-between text-xs text-neutral-400">
-            <span className="font-semibold uppercase tracking-wider flex items-center gap-1">
-              <Activity className="w-3.5 h-3.5 text-cyan-400" /> Body
-            </span>
+        {isEnabled('health') && (
+          <div className="p-3.5 rounded-2xl bg-[#1c1815] border border-amber-500/20 shadow-md space-y-2">
+            <div className="flex items-center justify-between text-xs text-neutral-400">
+              <span className="font-semibold uppercase tracking-wider flex items-center gap-1">
+                <Activity className="w-3.5 h-3.5 text-cyan-400" /> Body
+              </span>
+            </div>
+            <div className="space-y-1 text-xs">
+              <div className="flex justify-between">
+                <span className="text-neutral-400">Sleep</span>
+                <span className="font-bold text-cyan-200">{todayHealth.sleepHours}h</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-neutral-400">Water</span>
+                <span className="font-bold text-cyan-300">{todayHealth.waterLiters}L</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-neutral-400">Workout</span>
+                <span className="font-bold text-emerald-400">✓ Completed</span>
+              </div>
+            </div>
           </div>
-          <div className="space-y-1 text-xs">
-            <div className="flex justify-between">
-              <span className="text-neutral-400">Sleep</span>
-              <span className="font-bold text-cyan-200">{todayHealth.sleepHours}h</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-neutral-400">Water</span>
-              <span className="font-bold text-cyan-300">{todayHealth.waterLiters}L</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-neutral-400">Workout</span>
-              <span className="font-bold text-emerald-400">✓ Completed</span>
-            </div>
-          </div>
-        </div>
+        )}
 
         {/* LEARNING */}
-        <div className="p-3.5 rounded-2xl bg-[#1c1815] border border-amber-500/20 shadow-md space-y-2">
-          <div className="flex items-center justify-between text-xs text-neutral-400">
-            <span className="font-semibold uppercase tracking-wider flex items-center gap-1">
-              <BrainCircuit className="w-3.5 h-3.5 text-purple-400" /> Learning
-            </span>
-          </div>
-          <div className="space-y-1 text-xs">
-            <div className="flex justify-between">
-              <span className="text-neutral-400">AI Engineering</span>
-              <span className="font-bold text-purple-200">1h 30m</span>
+        {isEnabled('learning') && (
+          <div className="p-3.5 rounded-2xl bg-[#1c1815] border border-amber-500/20 shadow-md space-y-2">
+            <div className="flex items-center justify-between text-xs text-neutral-400">
+              <span className="font-semibold uppercase tracking-wider flex items-center gap-1">
+                <BrainCircuit className="w-3.5 h-3.5 text-purple-400" /> Learning
+              </span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-neutral-400">Python</span>
-              <span className="font-bold text-purple-300">40m</span>
+            <div className="space-y-1 text-xs">
+              <div className="flex justify-between">
+                <span className="text-neutral-400">AI Engineering</span>
+                <span className="font-bold text-purple-200">1h 30m</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-neutral-400">Python</span>
+                <span className="font-bold text-purple-300">40m</span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* TWO COLUMN GRID: ACTIVE GOALS & UPCOMING MILESTONES */}

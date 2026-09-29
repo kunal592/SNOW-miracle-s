@@ -19,35 +19,50 @@ import {
   MessageSquare,
   Database
 } from 'lucide-react';
+import { WorkspacePreferences, ModuleId } from '../types';
 
 interface MoreMenuViewProps {
   onNavigate: (route: string) => void;
   unreadReviewCount: number;
+  workspacePreferences?: WorkspacePreferences;
 }
 
-export const MoreMenuView: React.FC<MoreMenuViewProps> = ({ onNavigate, unreadReviewCount }) => {
+export const MoreMenuView: React.FC<MoreMenuViewProps> = ({
+  onNavigate,
+  unreadReviewCount,
+  workspacePreferences
+}) => {
+  const enabledModules = workspacePreferences?.enabledModules;
+
+  const isEnabled = (modId?: ModuleId) => {
+    if (!enabledModules || !modId) return true;
+    if (modId === 'home' || modId === 'inbox') return true;
+    return enabledModules.includes(modId);
+  };
+
   const menuItems = [
-    { route: '/cognitive', label: 'Cognitive Lab', icon: BrainCircuit, desc: 'Train reasoning & problem solving' },
-    { route: '/cognitive/profile', label: 'Cognitive Skill Profile (TPI)', icon: Award, desc: 'Radar chart across 8 skills' },
-    { route: '/ai', label: 'AI Supervisor', icon: MessageSquare, desc: 'Evidence-backed life observation' },
-    { route: '/ai/memory', label: 'AI Memory Manager', icon: Database, desc: 'Inspect & edit AI rules' },
-    { route: '/ai/activity', label: 'AI Activity Log', icon: Activity, desc: 'Audit log of automated actions' },
-    { route: '/inbox/review', label: 'AI Review Queue', icon: CheckSquare, badge: unreadReviewCount, desc: 'Confirm AI extractions' },
-    { route: '/finance', label: 'Finance & Accounting', icon: DollarSign, desc: 'Cash outflow vs consumption' },
-    { route: '/finance/consumption', label: 'Consumption Engine', icon: Sparkles, desc: 'Daily cost allocation' },
-    { route: '/finance/fuel', label: 'Fuel & Vehicle Track', icon: Fuel, desc: 'Mileage km/L & cost/km' },
-    { route: '/track', label: 'Time & Deep Work', icon: Clock, desc: 'Stopwatch & timeline' },
-    { route: '/learning', label: 'Learning Mastery', icon: Zap, desc: 'PyTorch, Python & skills' },
-    { route: '/food', label: 'Food & Nutrition', icon: Utensils, desc: 'Meals & pantry spend' },
-    { route: '/health', label: 'Health & Recovery', icon: Activity, desc: 'Sleep, water & workout' },
-    { route: '/goals', label: 'Goals Hierarchy', icon: Target, desc: 'Decomposed milestone goals' },
-    { route: '/journal', label: 'Daily Journal', icon: BookMarked, desc: 'Reflection & priorities' },
-    { route: '/analytics', label: 'Analytics & Trends', icon: BarChart3, desc: 'Recharts visualizations' },
-    { route: '/reports', label: 'Reports Generator', icon: FileText, desc: 'Daily/Weekly/Monthly PDF' },
-    { route: '/export', label: 'Export Center', icon: Download, desc: 'JSON/CSV data backup' },
+    { route: '/settings/workspace', label: 'Customize Workspace', icon: Sparkles, desc: 'Show/hide modules & launch route' },
+    { route: '/cognitive', label: 'Cognitive Lab', icon: BrainCircuit, desc: 'Train reasoning & problem solving', moduleId: 'cognitive' as ModuleId },
+    { route: '/cognitive/profile', label: 'Cognitive Skill Profile (TPI)', icon: Award, desc: 'Radar chart across 8 skills', moduleId: 'cognitive' as ModuleId },
+    { route: '/ai', label: 'AI Supervisor', icon: MessageSquare, desc: 'Evidence-backed life observation', moduleId: 'ai' as ModuleId },
+    { route: '/ai/memory', label: 'AI Memory Manager', icon: Database, desc: 'Inspect & edit AI rules', moduleId: 'ai' as ModuleId },
+    { route: '/ai/activity', label: 'AI Activity Log', icon: Activity, desc: 'Audit log of automated actions', moduleId: 'ai' as ModuleId },
+    { route: '/inbox/review', label: 'AI Review Queue', icon: CheckSquare, badge: unreadReviewCount, desc: 'Confirm AI extractions', moduleId: 'inbox' as ModuleId },
+    { route: '/finance', label: 'Finance & Accounting', icon: DollarSign, desc: 'Cash outflow vs consumption', moduleId: 'finance' as ModuleId },
+    { route: '/finance/consumption', label: 'Consumption Engine', icon: Sparkles, desc: 'Daily cost allocation', moduleId: 'finance' as ModuleId },
+    { route: '/finance/fuel', label: 'Fuel & Vehicle Track', icon: Fuel, desc: 'Mileage km/L & cost/km', moduleId: 'finance' as ModuleId },
+    { route: '/track', label: 'Time & Deep Work', icon: Clock, desc: 'Stopwatch & timeline', moduleId: 'time' as ModuleId },
+    { route: '/learning', label: 'Learning Mastery', icon: Zap, desc: 'PyTorch, Python & skills', moduleId: 'learning' as ModuleId },
+    { route: '/food', label: 'Food & Nutrition', icon: Utensils, desc: 'Meals & pantry spend', moduleId: 'food' as ModuleId },
+    { route: '/health', label: 'Health & Recovery', icon: Activity, desc: 'Sleep, water & workout', moduleId: 'health' as ModuleId },
+    { route: '/goals', label: 'Goals Hierarchy', icon: Target, desc: 'Decomposed milestone goals', moduleId: 'goals' as ModuleId },
+    { route: '/journal', label: 'Daily Journal', icon: BookMarked, desc: 'Reflection & priorities', moduleId: 'journal' as ModuleId },
+    { route: '/analytics', label: 'Analytics & Trends', icon: BarChart3, desc: 'Recharts visualizations', moduleId: 'analytics' as ModuleId },
+    { route: '/reports', label: 'Reports Generator', icon: FileText, desc: 'Daily/Weekly/Monthly PDF', moduleId: 'reports' as ModuleId },
+    { route: '/export', label: 'Export Center', icon: Download, desc: 'JSON/CSV data backup', moduleId: 'reports' as ModuleId },
     { route: '/settings/import', label: 'AI Profile Import', icon: Sparkles, desc: 'Import ChatGPT context into OS' },
     { route: '/settings', label: 'Settings & Theme', icon: Settings, desc: 'Profile & aesthetics' }
-  ];
+  ].filter((item) => isEnabled(item.moduleId));
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">

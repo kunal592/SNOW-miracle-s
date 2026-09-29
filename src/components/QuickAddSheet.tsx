@@ -14,7 +14,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { simulateAIExtraction } from '../lib/aiSimulator';
-import { AIExtraction, CategoryType } from '../types';
+import { AIExtraction, CategoryType, WorkspacePreferences } from '../types';
 
 interface QuickAddSheetProps {
   isOpen: boolean;
@@ -22,6 +22,7 @@ interface QuickAddSheetProps {
   onAddUniversalDump: (text: string, extraction: AIExtraction) => void;
   onAddExpense: (data: { title: string; amount: number; category: CategoryType }) => void;
   onAddLogTime: (data: { activity: string; minutes: number; category: 'Work' | 'Learning' | 'Health' | 'Personal' }) => void;
+  workspacePreferences?: WorkspacePreferences;
 }
 
 export const QuickAddSheet: React.FC<QuickAddSheetProps> = ({
@@ -29,8 +30,12 @@ export const QuickAddSheet: React.FC<QuickAddSheetProps> = ({
   onClose,
   onAddUniversalDump,
   onAddExpense,
-  onAddLogTime
+  onAddLogTime,
+  workspacePreferences
 }) => {
+  const enabledModules = workspacePreferences?.enabledModules;
+  const isFinanceEnabled = !enabledModules || enabledModules.includes('finance');
+  const isTimeEnabled = !enabledModules || enabledModules.includes('time');
   const [activeTab, setActiveTab] = useState<'dump' | 'expense' | 'time' | 'food' | 'learning'>('dump');
   
   // Dump state
@@ -130,26 +135,30 @@ export const QuickAddSheet: React.FC<QuickAddSheetProps> = ({
           >
             <Sparkles className="w-3.5 h-3.5" /> Dump Everything
           </button>
-          <button
-            onClick={() => setActiveTab('expense')}
-            className={`flex-1 py-2 rounded-lg font-medium flex items-center justify-center gap-1.5 transition ${
-              activeTab === 'expense'
-                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold'
-                : 'text-neutral-400 hover:text-neutral-200'
-            }`}
-          >
-            <DollarSign className="w-3.5 h-3.5" /> Expense
-          </button>
-          <button
-            onClick={() => setActiveTab('time')}
-            className={`flex-1 py-2 rounded-lg font-medium flex items-center justify-center gap-1.5 transition ${
-              activeTab === 'time'
-                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold'
-                : 'text-neutral-400 hover:text-neutral-200'
-            }`}
-          >
-            <Clock className="w-3.5 h-3.5" /> Time
-          </button>
+          {isFinanceEnabled && (
+            <button
+              onClick={() => setActiveTab('expense')}
+              className={`flex-1 py-2 rounded-lg font-medium flex items-center justify-center gap-1.5 transition ${
+                activeTab === 'expense'
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold'
+                  : 'text-neutral-400 hover:text-neutral-200'
+              }`}
+            >
+              <DollarSign className="w-3.5 h-3.5" /> Expense
+            </button>
+          )}
+          {isTimeEnabled && (
+            <button
+              onClick={() => setActiveTab('time')}
+              className={`flex-1 py-2 rounded-lg font-medium flex items-center justify-center gap-1.5 transition ${
+                activeTab === 'time'
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold'
+                  : 'text-neutral-400 hover:text-neutral-200'
+              }`}
+            >
+              <Clock className="w-3.5 h-3.5" /> Time
+            </button>
+          )}
         </div>
 
         {/* Body content */}

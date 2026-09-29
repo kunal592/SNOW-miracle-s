@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Notification, InboxEntry, AIExtraction, CategoryType, Checkpoint } from '../types';
+import { User, Notification, InboxEntry, AIExtraction, CategoryType, Checkpoint, WorkspacePreferences } from '../types';
 import { TopBar } from './TopBar';
 import { MobileBottomNav } from './MobileBottomNav';
 import { DesktopSidebar } from './DesktopSidebar';
@@ -22,6 +22,7 @@ interface AppShellProps {
   onAddUniversalDump: (text: string, extraction: AIExtraction) => void;
   onAddExpense: (data: { title: string; amount: number; category: CategoryType }) => void;
   onAddLogTime: (data: { activity: string; minutes: number; category: 'Work' | 'Learning' | 'Health' | 'Personal' }) => void;
+  workspacePreferences?: WorkspacePreferences;
 }
 
 export const AppShell: React.FC<AppShellProps> = ({
@@ -36,7 +37,8 @@ export const AppShell: React.FC<AppShellProps> = ({
   inbox,
   onAddUniversalDump,
   onAddExpense,
-  onAddLogTime
+  onAddLogTime,
+  workspacePreferences
 }) => {
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const [isCheckpointOpen, setIsCheckpointOpen] = useState(false);
@@ -60,7 +62,7 @@ export const AppShell: React.FC<AppShellProps> = ({
   }, []);
 
   const handleMarkAllRead = () => {
-    const updated = notifications.map((n) => ({ ...n, isRead: true }));
+    const updated = notifications.map((n: Notification) => ({ ...n, isRead: true }));
     setNotifications(updated);
     Storage.setNotifications(updated);
     onShowToast('All notifications marked as read', 'info');
@@ -81,6 +83,7 @@ export const AppShell: React.FC<AppShellProps> = ({
         onOpenQuickAdd={() => setIsQuickAddOpen(true)}
         user={user}
         unreadInboxCount={unreadInboxCount}
+        workspacePreferences={workspacePreferences}
       />
 
       {/* Main Content Area */}
@@ -106,12 +109,14 @@ export const AppShell: React.FC<AppShellProps> = ({
         onNavigate={onNavigate}
         onOpenQuickAdd={() => setIsQuickAddOpen(true)}
         unreadInboxCount={unreadInboxCount}
+        workspacePreferences={workspacePreferences}
       />
 
       {/* Modals & Drawers */}
       <QuickAddSheet
         isOpen={isQuickAddOpen}
         onClose={() => setIsQuickAddOpen(false)}
+        workspacePreferences={workspacePreferences}
         onAddUniversalDump={(text, ext) => {
           onAddUniversalDump(text, ext);
           onShowToast('Processed & added to Universal Inbox', 'success');

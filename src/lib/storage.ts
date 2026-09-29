@@ -18,8 +18,10 @@ import {
   CognitiveProfile,
   AIMemory,
   AIActivity,
-  AIInsight
+  AIInsight,
+  WorkspacePreferences
 } from '../types';
+import { DEFAULT_WORKSPACE_PREFERENCES } from './moduleRegistry';
 import {
   initialUser,
   initialCategories,
@@ -63,7 +65,8 @@ const STORAGE_KEYS = {
   COGNITIVE_PROFILE: 'snow_cognitive_profile',
   AI_MEMORIES: 'snow_ai_memories',
   AI_ACTIVITIES: 'snow_ai_activities',
-  AI_INSIGHTS: 'snow_ai_insights'
+  AI_INSIGHTS: 'snow_ai_insights',
+  WORKSPACE_PREFERENCES: 'snow_workspace_preferences'
 };
 
 function getItem<T>(key: string, fallback: T): T {
@@ -145,6 +148,9 @@ export const Storage = {
 
   getAIInsights: (): AIInsight[] => getItem(STORAGE_KEYS.AI_INSIGHTS, initialAIInsights),
   setAIInsights: (insights: AIInsight[]) => setItem(STORAGE_KEYS.AI_INSIGHTS, insights),
+
+  getWorkspacePreferences: (): WorkspacePreferences => getItem(STORAGE_KEYS.WORKSPACE_PREFERENCES, DEFAULT_WORKSPACE_PREFERENCES),
+  setWorkspacePreferences: (prefs: WorkspacePreferences) => setItem(STORAGE_KEYS.WORKSPACE_PREFERENCES, prefs),
 
   resetAll: () => {
     localStorage.clear();

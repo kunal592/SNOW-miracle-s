@@ -446,3 +446,44 @@ export interface Notification {
   type: 'checkpoint' | 'consumption' | 'inbox' | 'system';
   actionRoute?: string;
 }
+
+// WORKSPACE CUSTOMIZATION & MODULE TYPES
+export type ModuleId =
+  | 'home'
+  | 'inbox'
+  | 'finance'
+  | 'time'
+  | 'learning'
+  | 'food'
+  | 'health'
+  | 'goals'
+  | 'milestones'
+  | 'cognitive'
+  | 'ai'
+  | 'journal'
+  | 'analytics'
+  | 'reports';
+
+export type ModuleCategory = 'core' | 'life' | 'money' | 'growth' | 'insights';
+
+export interface ModuleDefinition {
+  id: ModuleId;
+  name: string;
+  iconName: string;
+  description: string;
+  category: ModuleCategory;
+  route: string;
+  canHide: boolean;
+  defaultOrderIndex: number;
+}
+
+export interface WorkspacePreferences {
+  enabledModules: ModuleId[];
+  defaultView: ModuleId;
+  dashboardOrder: ModuleId[];
+  quickActions: string[];
+  hasCompletedWorkspaceSetup: boolean;
+}
+
+export type WorkspacePreset = 'Full Life' | 'Productivity' | 'Finance' | 'Health' | 'Developer';
+
