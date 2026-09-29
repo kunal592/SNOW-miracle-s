@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-snowflake" style="color:#f59e0b">
+  <defs>
+    <linearGradient id="warmGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="50%" stop-color="#ea580c" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <line x1="12" y1="2" x2="12" y2="22" stroke="url(#warmGlow)" />
+  <line x1="20" y1="12" x2="4" y2="12" stroke="url(#warmGlow)" />
+  <line x1="17.65" y1="17.65" x2="6.35" y2="6.35" stroke="url(#warmGlow)" />
+  <line x1="17.65" y1="6.35" x2="6.35" y2="17.65" stroke="url(#warmGlow)" />
+  <polyline points="14 4 12 2 10 4" stroke="url(#warmGlow)" />
+  <polyline points="4 10 2 12 4 14" stroke="url(#warmGlow)" />
+  <polyline points="20 10 22 12 20 14" stroke="url(#warmGlow)" />
+  <polyline points="10 20 12 22 14 20" stroke="url(#warmGlow)" />
+</svg>
