@@ -45,6 +45,7 @@ export const MoreMenuView: React.FC<MoreMenuViewProps> = ({ onNavigate, unreadRe
     { route: '/analytics', label: 'Analytics & Trends', icon: BarChart3, desc: 'Recharts visualizations' },
     { route: '/reports', label: 'Reports Generator', icon: FileText, desc: 'Daily/Weekly/Monthly PDF' },
     { route: '/export', label: 'Export Center', icon: Download, desc: 'JSON/CSV data backup' },
+    { route: '/settings/import', label: 'AI Profile Import', icon: Sparkles, desc: 'Import ChatGPT context into OS' },
     { route: '/settings', label: 'Settings & Theme', icon: Settings, desc: 'Profile & aesthetics' }
   ];
 

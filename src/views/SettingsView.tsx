@@ -8,13 +8,15 @@ interface SettingsViewProps {
   onUpdateUser: (user: User) => void;
   categories: Category[];
   onShowToast: (msg: string, type?: 'success' | 'info') => void;
+  onNavigate?: (route: string) => void;
 }
 
 export const SettingsView: React.FC<SettingsViewProps> = ({
   user,
   onUpdateUser,
   categories,
-  onShowToast
+  onShowToast,
+  onNavigate
 }) => {
   const [userName, setUserName] = useState(user.name);
   const [userTitle, setUserTitle] = useState(user.title);
@@ -105,6 +107,31 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               <CheckCircle2 className="w-4 h-4" /> Save Profile Preferences
             </button>
           </form>
+        </div>
+
+        {/* AI PROFILE IMPORT BRIDGE */}
+        <div className="p-6 rounded-3xl bg-[#1c1815] border border-amber-500/30 shadow-md space-y-3 relative overflow-hidden">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-bold text-amber-100 font-outfit flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-amber-400" /> AI Profile Import & Life Context Sync
+            </h2>
+            <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">
+              FEATURED
+            </span>
+          </div>
+
+          <p className="text-xs text-neutral-300 leading-relaxed">
+            Bring your existing ChatGPT context, goals, skills, routines, and milestones directly into your Personal OS without manual entry. Features a 5-step preview, conflict detector, and two-way sync.
+          </p>
+
+          <div className="pt-2 flex items-center gap-3">
+            <button
+              onClick={() => onNavigate && onNavigate('/settings/import')}
+              className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition"
+            >
+              <Sparkles className="w-4 h-4" /> Open AI Profile Import Engine
+            </button>
+          </div>
         </div>
 
         {/* DATA & OFFLINE RESET */}

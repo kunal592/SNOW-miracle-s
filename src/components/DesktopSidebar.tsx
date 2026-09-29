@@ -86,6 +86,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
     {
       title: 'SYSTEM',
       items: [
+        { route: '/settings/import', label: 'AI Profile Import', icon: Sparkles },
         { route: '/export', label: 'Export Data', icon: Download },
         { route: '/settings', label: 'Settings', icon: Settings }
       ]

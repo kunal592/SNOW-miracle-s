@@ -30,13 +30,42 @@ export type CognitiveSkillCategory =
 
 export type CognitiveDifficultyLevel = 1 | 2 | 3 | 4 | 5;
 
+// AI PROFILE IMPORT & CONTEXT TYPES
+export type AIImportMode = 'Guided' | 'Quick' | 'Periodic';
+export type AIImportItemStatus = 'New' | 'Changed' | 'Outdated' | 'Conflict' | 'Unchanged';
+
+export interface AIImportItem {
+  id: string;
+  module: 'Profile' | 'Goals' | 'Learning' | 'Projects' | 'Milestones' | 'Routines' | 'Financial' | 'Health' | 'Preferences';
+  title: string;
+  detail: string;
+  category?: string;
+  status: AIImportItemStatus;
+  confidence: number;
+  source: string;
+  selectedAction: 'Import' | 'Ignore' | 'Edit';
+  editedTitle?: string;
+  editedDetail?: string;
+  existingValue?: string;
+  conflictReason?: string;
+}
+
+export interface AIImportPreview {
+  mode: AIImportMode;
+  totalFound: number;
+  items: AIImportItem[];
+  moduleCounts: Record<string, number>;
+  outdatedCount: number;
+  conflictCount: number;
+}
+
 export interface CognitiveQuestion {
   id: string;
   category: CognitiveSkillCategory;
   difficulty: CognitiveDifficultyLevel;
   question: string;
-  contextData?: string; // Optional real-life context from user data
-  hints: string[]; // [Hint 1 Direction, Hint 2 Stronger, Hint 3 Almost there]
+  contextData?: string;
+  hints: string[];
   correctAnswer: string;
   explanation: string;
   skills: string[];
@@ -51,10 +80,10 @@ export interface CognitiveAttempt {
   timeTakenSecs: number;
   userAnswer: string;
   isCorrect: boolean;
-  isAssisted: boolean; // True if hints used
+  isAssisted: boolean;
   hintsRequested: number;
   attemptsCount: number;
-  reasoningScore: number; // 1 - 10
+  reasoningScore: number;
   aiFeedback: {
     verdict: 'Correct' | 'Incorrect' | 'Partial';
     qualityScore: number;
@@ -65,15 +94,15 @@ export interface CognitiveAttempt {
 }
 
 export interface CognitiveProfile {
-  level: number; // e.g. 2.4
+  level: number;
   streakDays: number;
   totalSolved: number;
   independentSolves: number;
   assistedSolves: number;
   averageSolveTimeSecs: number;
   averageReasoningScore: number;
-  trainingPerformanceIndex: Record<CognitiveSkillCategory, number>; // 0 - 100
-  skillLevels: Record<CognitiveSkillCategory, number>; // 1.0 - 5.0
+  trainingPerformanceIndex: Record<CognitiveSkillCategory, number>;
+  skillLevels: Record<CognitiveSkillCategory, number>;
 }
 
 export interface AIInsight {
@@ -158,7 +187,7 @@ export interface WeeklyReview {
   suggestedChallengeMix: { category: CognitiveSkillCategory; percent: number }[];
 }
 
-// EXISTING BASE TYPES
+// BASE TYPES
 export interface User {
   id: string;
   name: string;

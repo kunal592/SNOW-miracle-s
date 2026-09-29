@@ -58,6 +58,8 @@ import { WeeklyThinkingReviewView } from './views/WeeklyThinkingReviewView';
 import { AICommandCenterView } from './views/AICommandCenterView';
 import { AIMemoryView } from './views/AIMemoryView';
 import { AIActivityLogView } from './views/AIActivityLogView';
+import { AIProfileImportView } from './views/AIProfileImportView';
+import { OnboardingImportModal } from './components/OnboardingImportModal';
 
 export function App() {
   const [currentRoute, setCurrentRoute] = useState<string>(() => {
@@ -496,6 +498,28 @@ export function App() {
             onUpdateUser={handleUpdateUser}
             categories={Storage.getCategories()}
             onShowToast={handleShowToast}
+            onNavigate={handleNavigate}
+          />
+        );
+      case '/settings/import':
+        return (
+          <AIProfileImportView
+            user={user}
+            goals={goals}
+            learningGoals={learningGoals}
+            milestones={milestones}
+            consumption={consumption}
+            health={health}
+            onNavigate={handleNavigate}
+            onShowToast={handleShowToast}
+            onRefreshData={() => {
+              setUser(Storage.getUser());
+              setGoals(Storage.getGoals());
+              setLearningGoals(Storage.getLearningGoals());
+              setMilestones(Storage.getMilestones());
+              setConsumption(Storage.getConsumption());
+              setHealth(Storage.getHealth());
+            }}
           />
         );
       case '/more':
