@@ -38,6 +38,10 @@ func Created(c *gin.Context, data interface{}) {
 	})
 }
 
+func NoContent(c *gin.Context) {
+	c.Status(http.StatusNoContent)
+}
+
 func OKWithMeta(c *gin.Context, data interface{}, meta *Meta) {
 	c.JSON(http.StatusOK, APIResponse{
 		Success: true,

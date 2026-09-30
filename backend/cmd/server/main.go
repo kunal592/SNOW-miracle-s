@@ -15,6 +15,14 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/kunal/snow/config"
 	"github.com/kunal/snow/internal/auth"
+	"github.com/kunal/snow/internal/consumption"
+	"github.com/kunal/snow/internal/expenses"
+	"github.com/kunal/snow/internal/goals"
+	"github.com/kunal/snow/internal/inbox"
+	"github.com/kunal/snow/internal/learning"
+	"github.com/kunal/snow/internal/lifelog"
+	"github.com/kunal/snow/internal/milestones"
+	"github.com/kunal/snow/internal/timelog"
 	"github.com/kunal/snow/internal/users"
 	"github.com/kunal/snow/internal/workspace"
 	"github.com/kunal/snow/pkg/logger"
@@ -95,11 +103,27 @@ func main() {
 	authSvc := auth.NewService(pool, cfg.JWT.Secret, cfg.JWT.AccessExpiry, cfg.JWT.RefreshExpiry)
 	usersSvc := users.NewService(pool)
 	workspaceSvc := workspace.NewService(pool)
+	inboxSvc := inbox.NewService(pool)
+	expensesSvc := expenses.NewService(pool)
+	consumptionSvc := consumption.NewService(pool)
+	timelogSvc := timelog.NewService(pool)
+	learningSvc := learning.NewService(pool)
+	goalsSvc := goals.NewService(pool)
+	milestonesSvc := milestones.NewService(pool)
+	lifelogSvc := lifelog.NewService(pool)
 
 	// ---- Build handlers ------------------------------------------------
 	authHandler := auth.NewHandler(authSvc, cfg.Google.ClientID, cfg.Google.ClientSecret, cfg.Google.RedirectURL, cfg.Frontend)
 	usersHandler := users.NewHandler(usersSvc)
 	workspaceHandler := workspace.NewHandler(workspaceSvc)
+	inboxHandler := inbox.NewHandler(inboxSvc)
+	expensesHandler := expenses.NewHandler(expensesSvc)
+	consumptionHandler := consumption.NewHandler(consumptionSvc)
+	timelogHandler := timelog.NewHandler(timelogSvc)
+	learningHandler := learning.NewHandler(learningSvc)
+	goalsHandler := goals.NewHandler(goalsSvc)
+	milestonesHandler := milestones.NewHandler(milestonesSvc)
+	lifelogHandler := lifelog.NewHandler(lifelogSvc)
 
 	// ---- API routes ----------------------------------------------------
 	api := r.Group("/api/v1")
@@ -113,10 +137,14 @@ func main() {
 	{
 		usersHandler.RegisterRoutes(protected)
 		workspaceHandler.RegisterRoutes(protected)
-		// TODO Phase 2: inbox, expenses, consumption, time, food, health, learning
-		// TODO Phase 3: goals, milestones, journal
-		// TODO Phase 4: cognitive
-		// TODO Phase 5: ai, analytics, reports
+		inboxHandler.RegisterRoutes(protected)
+		expensesHandler.RegisterRoutes(protected)
+		consumptionHandler.RegisterRoutes(protected)
+		timelogHandler.RegisterRoutes(protected)
+		learningHandler.RegisterRoutes(protected)
+		goalsHandler.RegisterRoutes(protected)
+		milestonesHandler.RegisterRoutes(protected)
+		lifelogHandler.RegisterRoutes(protected)
 	}
 
 	// ---- Start server --------------------------------------------------
