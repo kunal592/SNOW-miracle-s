@@ -26,7 +26,9 @@ import {
   Layers,
   ShieldCheck,
   Check,
-  AlertCircle
+  AlertCircle,
+  Pin,
+  PinOff
 } from 'lucide-react';
 import {
   ModuleDefinition,
@@ -129,6 +131,33 @@ export function WorkspaceCustomizationView({
     setActivePreset('Custom');
     onUpdatePreferences(updated);
     onShowToast(isCurrentlyEnabled ? `Module hidden from workspace` : `Module added to workspace`, 'info');
+  };
+
+  const handleTogglePin = (id: ModuleId) => {
+    if (id === 'home' || id === 'inbox') return;
+
+    const currentPinned = localPrefs.pinnedSidebarModules || ['home', 'inbox', 'time', 'learning', 'goals'];
+    const isCurrentlyPinned = currentPinned.includes(id);
+
+    let updatedPinned: ModuleId[];
+    if (isCurrentlyPinned) {
+      updatedPinned = currentPinned.filter((m) => m !== id);
+    } else {
+      updatedPinned = [...currentPinned, id];
+    }
+
+    const updated = {
+      ...localPrefs,
+      pinnedSidebarModules: updatedPinned,
+      hasCompletedWorkspaceSetup: true
+    };
+
+    setLocalPrefs(updated);
+    onUpdatePreferences(updated);
+    onShowToast(
+      isCurrentlyPinned ? `Moved ${id.toUpperCase()} to "More Modules"` : `Pinned ${id.toUpperCase()} to Daily Use Sidebar`,
+      'info'
+    );
   };
 
   const handleApplyPreset = (presetName: WorkspacePreset) => {
@@ -347,17 +376,18 @@ export function WorkspaceCustomizationView({
                 {categoryModules.map((mod) => {
                   const isEnabled = localPrefs.enabledModules.includes(mod.id);
                   const isCore = !mod.canHide;
+                  const currentPinned = localPrefs.pinnedSidebarModules || ['home', 'inbox', 'time', 'learning', 'goals'];
+                  const isPinned = isCore || currentPinned.includes(mod.id);
 
                   return (
                     <div
                       key={mod.id}
-                      onClick={() => !isCore && handleToggleModule(mod.id)}
                       className={`p-4 rounded-2xl border transition-all flex items-start justify-between gap-3 ${
                         isCore
                           ? 'bg-[#12100e] border-amber-500/30'
                           : isEnabled
-                          ? 'bg-[#12100e] border-amber-500/25 hover:border-amber-500/50 cursor-pointer shadow-md'
-                          : 'bg-[#12100e]/40 border-neutral-800 opacity-60 hover:opacity-100 hover:border-neutral-700 cursor-pointer'
+                          ? 'bg-[#12100e] border-amber-500/25 shadow-md'
+                          : 'bg-[#12100e]/40 border-neutral-800 opacity-60'
                       }`}
                     >
                       <div className="flex items-start gap-3">
@@ -379,32 +409,56 @@ export function WorkspaceCustomizationView({
                                 <Lock className="w-3 h-3 text-amber-400" /> Core
                               </span>
                             )}
+                            {isEnabled && !isCore && (
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1 ${
+                                isPinned
+                                  ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
+                                  : 'bg-stone-800 text-neutral-400 border border-stone-700'
+                              }`}>
+                                <Pin className={`w-3 h-3 ${isPinned ? 'text-amber-400 fill-amber-400' : 'text-neutral-500'}`} />
+                                {isPinned ? 'Sidebar' : 'More Menu'}
+                              </span>
+                            )}
                           </div>
                           <p className="text-xs text-neutral-400 mt-1 leading-relaxed">{mod.description}</p>
                         </div>
                       </div>
 
-                      {/* Toggle Switch */}
-                      {!isCore ? (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleToggleModule(mod.id);
-                          }}
-                          className={`px-3 py-1.5 rounded-xl font-extrabold text-xs transition shrink-0 flex items-center gap-1.5 ${
-                            isEnabled
-                              ? 'bg-amber-500 text-neutral-950 shadow-md shadow-amber-950/60'
-                              : 'bg-stone-800 text-neutral-400 hover:text-neutral-200'
-                          }`}
-                        >
-                          {isEnabled ? 'SHOW' : 'HIDE'}
-                        </button>
-                      ) : (
-                        <span className="text-[11px] font-bold text-amber-400/80 px-2 py-1 rounded bg-amber-500/10">
-                          ALWAYS ON
-                        </span>
-                      )}
+                      {/* Action Buttons */}
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {isEnabled && !isCore && (
+                          <button
+                            type="button"
+                            onClick={() => handleTogglePin(mod.id)}
+                            title={isPinned ? 'Move to More Modules' : 'Pin to Sidebar Daily Use'}
+                            className={`p-2 rounded-xl font-bold text-xs transition border flex items-center gap-1 ${
+                              isPinned
+                                ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30'
+                                : 'bg-stone-800 text-neutral-400 hover:text-amber-200 border-stone-700 hover:border-amber-500/30'
+                            }`}
+                          >
+                            <Pin className={`w-3.5 h-3.5 ${isPinned ? 'text-amber-400 fill-amber-400' : 'text-neutral-400'}`} />
+                          </button>
+                        )}
+
+                        {!isCore ? (
+                          <button
+                            type="button"
+                            onClick={() => handleToggleModule(mod.id)}
+                            className={`px-3 py-2 rounded-xl font-extrabold text-xs transition flex items-center gap-1.5 ${
+                              isEnabled
+                                ? 'bg-amber-500 text-neutral-950 shadow-md shadow-amber-950/60'
+                                : 'bg-stone-800 text-neutral-400 hover:text-neutral-200'
+                            }`}
+                          >
+                            {isEnabled ? 'ACTIVE' : 'ENABLE'}
+                          </button>
+                        ) : (
+                          <span className="text-[11px] font-bold text-amber-400/80 px-2 py-1 rounded bg-amber-500/10">
+                            ALWAYS ON
+                          </span>
+                        )}
+                      </div>
                     </div>
                   );
                 })}
