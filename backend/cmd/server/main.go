@@ -14,7 +14,9 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/kunal/snow/config"
+	"github.com/kunal/snow/internal/analytics"
 	"github.com/kunal/snow/internal/auth"
+	"github.com/kunal/snow/internal/cognitive"
 	"github.com/kunal/snow/internal/consumption"
 	"github.com/kunal/snow/internal/expenses"
 	"github.com/kunal/snow/internal/goals"
@@ -22,6 +24,7 @@ import (
 	"github.com/kunal/snow/internal/learning"
 	"github.com/kunal/snow/internal/lifelog"
 	"github.com/kunal/snow/internal/milestones"
+	"github.com/kunal/snow/internal/supervisor"
 	"github.com/kunal/snow/internal/timelog"
 	"github.com/kunal/snow/internal/users"
 	"github.com/kunal/snow/internal/workspace"
@@ -111,6 +114,9 @@ func main() {
 	goalsSvc := goals.NewService(pool)
 	milestonesSvc := milestones.NewService(pool)
 	lifelogSvc := lifelog.NewService(pool)
+	analyticsSvc := analytics.NewService(pool)
+	cognitiveSvc := cognitive.NewService(pool)
+	supervisorSvc := supervisor.NewService(pool)
 
 	// ---- Build handlers ------------------------------------------------
 	authHandler := auth.NewHandler(authSvc, cfg.Google.ClientID, cfg.Google.ClientSecret, cfg.Google.RedirectURL, cfg.Frontend)
@@ -124,6 +130,9 @@ func main() {
 	goalsHandler := goals.NewHandler(goalsSvc)
 	milestonesHandler := milestones.NewHandler(milestonesSvc)
 	lifelogHandler := lifelog.NewHandler(lifelogSvc)
+	analyticsHandler := analytics.NewHandler(analyticsSvc)
+	cognitiveHandler := cognitive.NewHandler(cognitiveSvc)
+	supervisorHandler := supervisor.NewHandler(supervisorSvc)
 
 	// ---- API routes ----------------------------------------------------
 	api := r.Group("/api/v1")
@@ -145,6 +154,9 @@ func main() {
 		goalsHandler.RegisterRoutes(protected)
 		milestonesHandler.RegisterRoutes(protected)
 		lifelogHandler.RegisterRoutes(protected)
+		analyticsHandler.RegisterRoutes(protected)
+		cognitiveHandler.RegisterRoutes(protected)
+		supervisorHandler.RegisterRoutes(protected)
 	}
 
 	// ---- Start server --------------------------------------------------
