@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Home,
   Inbox,
@@ -20,7 +20,10 @@ import {
   Sparkles,
   BrainCircuit,
   Zap,
-  MessageSquare
+  MessageSquare,
+  ChevronDown,
+  ChevronUp,
+  Layers
 } from 'lucide-react';
 import { User, WorkspacePreferences, ModuleId } from '../types';
 
@@ -33,6 +36,19 @@ interface DesktopSidebarProps {
   workspacePreferences?: WorkspacePreferences;
 }
 
+interface NavItem {
+  route: string;
+  label: string;
+  icon: any;
+  badge?: number;
+  moduleId?: ModuleId;
+}
+
+interface NavSection {
+  title: string;
+  items: NavItem[];
+}
+
 export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
   currentRoute,
   onNavigate,
@@ -41,7 +57,10 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
   unreadInboxCount,
   workspacePreferences
 }) => {
+  const [isMoreExpanded, setIsMoreExpanded] = useState(false);
+
   const enabledModules = workspacePreferences?.enabledModules;
+  const pinnedModules = workspacePreferences?.pinnedSidebarModules || ['home', 'inbox', 'time', 'learning', 'goals'];
 
   const isEnabled = (modId?: ModuleId) => {
     if (!enabledModules || !modId) return true;
@@ -49,60 +68,82 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
     return enabledModules.includes(modId);
   };
 
-  const navSections: { title: string; items: { route: string; label: string; icon: any; badge?: number; moduleId?: ModuleId }[] }[] = [
+  const isPinned = (modId?: ModuleId) => {
+    if (!modId) return true; // System items pinned by default
+    if (modId === 'home' || modId === 'inbox') return true;
+    return pinnedModules.includes(modId);
+  };
+
+  const navSections: NavSection[] = [
     {
       title: 'OPERATING SYSTEM',
       items: [
-        { route: '/', label: 'Command Center', icon: Home, moduleId: 'home' as ModuleId },
-        { route: '/inbox', label: 'Universal Inbox', icon: Inbox, badge: unreadInboxCount, moduleId: 'inbox' as ModuleId },
-        { route: '/inbox/review', label: 'AI Review Queue', icon: CheckSquare, moduleId: 'inbox' as ModuleId }
+        { route: '/', label: 'Command Center', icon: Home, moduleId: 'home' },
+        { route: '/inbox', label: 'Universal Inbox', icon: Inbox, badge: unreadInboxCount, moduleId: 'inbox' },
+        { route: '/inbox/review', label: 'AI Review Queue', icon: CheckSquare, moduleId: 'inbox' }
       ]
     },
     {
       title: 'AI & COGNITION',
       items: [
-        { route: '/cognitive', label: 'Cognitive Lab', icon: BrainCircuit, moduleId: 'cognitive' as ModuleId },
-        { route: '/cognitive/profile', label: 'Skill Profile (TPI)', icon: Sparkles, moduleId: 'cognitive' as ModuleId },
-        { route: '/ai', label: 'AI Supervisor', icon: MessageSquare, moduleId: 'ai' as ModuleId }
+        { route: '/cognitive', label: 'Cognitive Lab', icon: BrainCircuit, moduleId: 'cognitive' },
+        { route: '/cognitive/profile', label: 'Skill Profile (TPI)', icon: Sparkles, moduleId: 'cognitive' },
+        { route: '/ai', label: 'AI Supervisor', icon: MessageSquare, moduleId: 'ai' }
       ]
     },
     {
       title: 'FINANCE & CONSUMPTION',
       items: [
-        { route: '/finance', label: 'Finance Dashboard', icon: DollarSign, moduleId: 'finance' as ModuleId },
-        { route: '/finance/consumption', label: 'Consumption Engine', icon: Sparkles, moduleId: 'finance' as ModuleId },
-        { route: '/finance/fuel', label: 'Fuel Vehicle Track', icon: Fuel, moduleId: 'finance' as ModuleId }
+        { route: '/finance', label: 'Finance Dashboard', icon: DollarSign, moduleId: 'finance' },
+        { route: '/finance/consumption', label: 'Consumption Engine', icon: Sparkles, moduleId: 'finance' },
+        { route: '/finance/fuel', label: 'Fuel Vehicle Track', icon: Fuel, moduleId: 'finance' }
       ]
     },
     {
       title: 'LIFE LOGGING',
       items: [
-        { route: '/track', label: 'Time & Deep Work', icon: Clock, moduleId: 'time' as ModuleId },
-        { route: '/learning', label: 'Learning Mastery', icon: BookOpen, moduleId: 'learning' as ModuleId },
-        { route: '/food', label: 'Food & Nutrition', icon: Utensils, moduleId: 'food' as ModuleId },
-        { route: '/health', label: 'Health & Sleep', icon: Activity, moduleId: 'health' as ModuleId },
-        { route: '/journal', label: 'Daily Journal', icon: BookMarked, moduleId: 'journal' as ModuleId }
+        { route: '/track', label: 'Time & Deep Work', icon: Clock, moduleId: 'time' },
+        { route: '/learning', label: 'Learning Mastery', icon: BookOpen, moduleId: 'learning' },
+        { route: '/food', label: 'Food & Nutrition', icon: Utensils, moduleId: 'food' },
+        { route: '/health', label: 'Health & Sleep', icon: Activity, moduleId: 'health' },
+        { route: '/journal', label: 'Daily Journal', icon: BookMarked, moduleId: 'journal' }
       ]
     },
     {
       title: 'GOALS & STRATEGY',
       items: [
-        { route: '/goals', label: 'Goals Hierarchy', icon: Target, moduleId: 'goals' as ModuleId },
-        { route: '/milestones', label: 'Milestones & Arc', icon: Flag, moduleId: 'milestones' as ModuleId },
-        { route: '/analytics', label: 'Analytics & Insights', icon: BarChart3, moduleId: 'analytics' as ModuleId },
-        { route: '/reports', label: 'Reports Generator', icon: FileText, moduleId: 'reports' as ModuleId }
-      ]
-    },
-    {
-      title: 'SYSTEM',
-      items: [
-        { route: '/settings/workspace', label: 'Customize Workspace', icon: Sparkles },
-        { route: '/settings/import', label: 'AI Profile Import', icon: Sparkles },
-        { route: '/export', label: 'Export Data', icon: Download },
-        { route: '/settings', label: 'Settings', icon: Settings }
+        { route: '/goals', label: 'Goals Hierarchy', icon: Target, moduleId: 'goals' },
+        { route: '/milestones', label: 'Milestones & Arc', icon: Flag, moduleId: 'milestones' },
+        { route: '/analytics', label: 'Analytics & Insights', icon: BarChart3, moduleId: 'analytics' },
+        { route: '/reports', label: 'Reports Generator', icon: FileText, moduleId: 'reports' }
       ]
     }
   ];
+
+  const systemItems: NavItem[] = [
+    { route: '/settings/workspace', label: 'Customize Workspace', icon: Sparkles },
+    { route: '/settings/import', label: 'AI Profile Import', icon: Sparkles },
+    { route: '/export', label: 'Export Data', icon: Download },
+    { route: '/settings', label: 'Settings', icon: Settings }
+  ];
+
+  // Flatten all enabled items
+  const allEnabledItems: NavItem[] = [];
+  navSections.forEach((section) => {
+    section.items.forEach((item) => {
+      if (isEnabled(item.moduleId)) {
+        allEnabledItems.push(item);
+      }
+    });
+  });
+
+  // Separate pinned items (Daily Use) vs unpinned items (More Menu)
+  const pinnedItems = allEnabledItems.filter((item) => isPinned(item.moduleId));
+  const unpinnedItems = allEnabledItems.filter((item) => !isPinned(item.moduleId));
+
+  // Check if current route is inside unpinned items (auto-expand if active)
+  const isCurrentRouteUnpinned = unpinnedItems.some((item) => item.route === currentRoute);
+  const showMore = isMoreExpanded || isCurrentRouteUnpinned;
 
   return (
     <aside className="hidden md:flex flex-col w-64 bg-[#16120f] border-r border-amber-500/20 h-screen sticky top-0 shrink-0 select-none">
@@ -133,46 +174,121 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
         </button>
       </div>
 
-      {/* Nav Menu */}
+      {/* Nav Menu Container */}
       <div className="flex-1 overflow-y-auto px-3 py-2 space-y-4 custom-scrollbar">
-        {navSections.map((section) => {
-          const visibleItems = section.items.filter((item) => isEnabled(item.moduleId));
-          if (visibleItems.length === 0) return null;
+        {/* 1. DAILY USE / PINNED TABS SECTION */}
+        <div className="space-y-1">
+          <div className="px-3 text-[10px] font-bold text-amber-400/90 tracking-wider flex items-center justify-between">
+            <span>DAILY USE (PINNED)</span>
+            <span className="text-[9px] font-normal text-neutral-500">{pinnedItems.length} active</span>
+          </div>
 
-          return (
-            <div key={section.title} className="space-y-1">
-              <div className="px-3 text-[10px] font-bold text-neutral-400 tracking-wider">
-                {section.title}
+          {pinnedItems.map((item) => {
+            const isActive = currentRoute === item.route;
+            const Icon = item.icon;
+
+            return (
+              <button
+                key={item.route}
+                onClick={() => onNavigate(item.route)}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition ${
+                  isActive
+                    ? 'bg-amber-500/15 text-amber-200 border border-amber-500/30 font-semibold'
+                    : 'text-neutral-300 hover:bg-[#26201b] hover:text-amber-200/90'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-amber-400' : 'text-neutral-400'}`} />
+                  <span>{item.label}</span>
+                </div>
+                {item.badge !== undefined && item.badge > 0 && (
+                  <span className="px-1.5 py-0.5 rounded-full bg-orange-600 text-white text-[10px] font-bold">
+                    {item.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* 2. MORE MODULES (COLLAPSIBLE SECTION) */}
+        {unpinnedItems.length > 0 && (
+          <div className="space-y-1 pt-2 border-t border-amber-500/15">
+            <button
+              onClick={() => setIsMoreExpanded(!isMoreExpanded)}
+              className="w-full px-3 py-2 rounded-xl text-xs font-bold text-amber-300 hover:text-amber-200 hover:bg-[#26201b] flex items-center justify-between transition"
+            >
+              <div className="flex items-center gap-2">
+                <Layers className="w-4 h-4 text-amber-400" />
+                <span>MORE MODULES ({unpinnedItems.length})</span>
               </div>
-              {visibleItems.map((item) => {
-                const isActive = currentRoute === item.route;
-                const Icon = item.icon;
+              {showMore ? (
+                <ChevronUp className="w-4 h-4 text-neutral-400" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-neutral-400" />
+              )}
+            </button>
 
-                return (
-                  <button
-                    key={item.route}
-                    onClick={() => onNavigate(item.route)}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition ${
-                      isActive
-                        ? 'bg-amber-500/15 text-amber-200 border border-amber-500/30 font-semibold'
-                        : 'text-neutral-300 hover:bg-[#26201b] hover:text-amber-200/90'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <Icon className={`w-4 h-4 ${isActive ? 'text-amber-400' : 'text-neutral-400'}`} />
-                      <span>{item.label}</span>
-                    </div>
-                    {item.badge !== undefined && item.badge > 0 && (
-                      <span className="px-1.5 py-0.5 rounded-full bg-orange-600 text-white text-[10px] font-bold">
-                        {item.badge}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          );
-        })}
+            {showMore && (
+              <div className="space-y-1 pl-2 border-l border-amber-500/20 ml-3 pt-1">
+                {unpinnedItems.map((item) => {
+                  const isActive = currentRoute === item.route;
+                  const Icon = item.icon;
+
+                  return (
+                    <button
+                      key={item.route}
+                      onClick={() => onNavigate(item.route)}
+                      className={`w-full flex items-center justify-between px-3 py-1.5 rounded-xl text-xs font-medium transition ${
+                        isActive
+                          ? 'bg-amber-500/15 text-amber-200 border border-amber-500/30 font-semibold'
+                          : 'text-neutral-400 hover:bg-[#26201b] hover:text-neutral-200'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-amber-400' : 'text-neutral-500'}`} />
+                        <span>{item.label}</span>
+                      </div>
+                      {item.badge !== undefined && item.badge > 0 && (
+                        <span className="px-1.5 py-0.5 rounded-full bg-orange-600 text-white text-[10px] font-bold">
+                          {item.badge}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 3. SYSTEM SECTION */}
+        <div className="space-y-1 pt-2 border-t border-amber-500/15">
+          <div className="px-3 text-[10px] font-bold text-neutral-400 tracking-wider">
+            SYSTEM & PREFERENCES
+          </div>
+          {systemItems.map((item) => {
+            const isActive = currentRoute === item.route;
+            const Icon = item.icon;
+
+            return (
+              <button
+                key={item.route}
+                onClick={() => onNavigate(item.route)}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition ${
+                  isActive
+                    ? 'bg-amber-500/15 text-amber-200 border border-amber-500/30 font-semibold'
+                    : 'text-neutral-400 hover:bg-[#26201b] hover:text-neutral-200'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-amber-400' : 'text-neutral-500'}`} />
+                  <span>{item.label}</span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* User Footer */}

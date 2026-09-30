@@ -479,6 +479,7 @@ export interface ModuleDefinition {
 
 export interface WorkspacePreferences {
   enabledModules: ModuleId[];
+  pinnedSidebarModules: ModuleId[];
   defaultView: ModuleId;
   dashboardOrder: ModuleId[];
   quickActions: string[];

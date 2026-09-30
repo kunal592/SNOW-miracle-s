@@ -147,6 +147,7 @@ export const ALL_MODULE_IDS: ModuleId[] = MODULE_REGISTRY.map((m) => m.id);
 
 export const DEFAULT_WORKSPACE_PREFERENCES: WorkspacePreferences = {
   enabledModules: [...ALL_MODULE_IDS],
+  pinnedSidebarModules: ['home', 'inbox', 'time', 'learning', 'goals'],
   defaultView: 'home',
   dashboardOrder: [
     'ai',
@@ -181,4 +182,10 @@ export function getModulesByCategory(category: ModuleCategory): ModuleDefinition
 export function isModuleEnabled(prefs: WorkspacePreferences, id: ModuleId): boolean {
   if (id === 'home' || id === 'inbox') return true;
   return prefs.enabledModules.includes(id);
+}
+
+export function isModulePinned(prefs: WorkspacePreferences, id: ModuleId): boolean {
+  if (id === 'home' || id === 'inbox') return true;
+  const pinned = prefs.pinnedSidebarModules || ['home', 'inbox', 'time', 'learning', 'goals'];
+  return pinned.includes(id);
 }
