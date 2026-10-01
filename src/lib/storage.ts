@@ -19,7 +19,10 @@ import {
   AIMemory,
   AIActivity,
   AIInsight,
-  WorkspacePreferences
+  WorkspacePreferences,
+  ArcCalendarDay,
+  DailyProgress,
+  AuthSession
 } from '../types';
 import { DEFAULT_WORKSPACE_PREFERENCES } from './moduleRegistry';
 import {
@@ -42,7 +45,9 @@ import {
   initialCognitiveProfile,
   initialAIMemories,
   initialAIActivityLogs,
-  initialAIInsights
+  initialAIInsights,
+  initialArcCalendarDays,
+  initialDailyProgressHistory
 } from './mockData';
 
 const STORAGE_KEYS = {
@@ -66,7 +71,12 @@ const STORAGE_KEYS = {
   AI_MEMORIES: 'snow_ai_memories',
   AI_ACTIVITIES: 'snow_ai_activities',
   AI_INSIGHTS: 'snow_ai_insights',
-  WORKSPACE_PREFERENCES: 'snow_workspace_preferences'
+  WORKSPACE_PREFERENCES: 'snow_workspace_preferences',
+  ARC_CALENDAR: 'snow_arc_calendar',
+  DAILY_PROGRESS: 'snow_daily_progress',
+  AUTH_SESSION: 'snow_auth_session',
+  AUTH_TOKEN: 'snow_access_token',
+  REFRESH_TOKEN: 'snow_refresh_token'
 };
 
 function getItem<T>(key: string, fallback: T): T {
@@ -151,6 +161,66 @@ export const Storage = {
 
   getWorkspacePreferences: (): WorkspacePreferences => getItem(STORAGE_KEYS.WORKSPACE_PREFERENCES, DEFAULT_WORKSPACE_PREFERENCES),
   setWorkspacePreferences: (prefs: WorkspacePreferences) => setItem(STORAGE_KEYS.WORKSPACE_PREFERENCES, prefs),
+
+  // ARC CALENDAR (Progress & Distracted tracking)
+  getArcCalendar: (): ArcCalendarDay[] => getItem(STORAGE_KEYS.ARC_CALENDAR, initialArcCalendarDays),
+  setArcCalendar: (days: ArcCalendarDay[]) => setItem(STORAGE_KEYS.ARC_CALENDAR, days),
+  saveArcCalendarDay: (day: ArcCalendarDay): ArcCalendarDay[] => {
+    const days = getItem<ArcCalendarDay[]>(STORAGE_KEYS.ARC_CALENDAR, initialArcCalendarDays);
+    const existingIndex = days.findIndex((d) => d.date === day.date);
+    let updated: ArcCalendarDay[];
+    if (existingIndex >= 0) {
+      updated = [...days];
+      updated[existingIndex] = { ...updated[existingIndex], ...day, updatedAt: new Date().toISOString() };
+    } else {
+      updated = [...days, { ...day, updatedAt: new Date().toISOString() }];
+    }
+    setItem(STORAGE_KEYS.ARC_CALENDAR, updated);
+    return updated;
+  },
+
+  // DAILY PROGRESS HISTORY (Evidence-based progress & distraction calendar)
+  getDailyProgress: (): DailyProgress[] => getItem(STORAGE_KEYS.DAILY_PROGRESS, initialDailyProgressHistory),
+  getDailyProgressByDate: (date: string): DailyProgress | undefined => {
+    const list = getItem<DailyProgress[]>(STORAGE_KEYS.DAILY_PROGRESS, initialDailyProgressHistory);
+    return list.find((item) => item.date === date);
+  },
+  saveDailyProgress: (entry: DailyProgress): DailyProgress[] => {
+    const list = getItem<DailyProgress[]>(STORAGE_KEYS.DAILY_PROGRESS, initialDailyProgressHistory);
+    const idx = list.findIndex((item) => item.date === entry.date);
+    let updated: DailyProgress[];
+    if (idx >= 0) {
+      updated = [...list];
+      updated[idx] = { ...updated[idx], ...entry };
+    } else {
+      updated = [...list, entry];
+    }
+    setItem(STORAGE_KEYS.DAILY_PROGRESS, updated);
+    return updated;
+  },
+
+  // AUTH SESSION
+  getAuthSession: (): AuthSession => getItem(STORAGE_KEYS.AUTH_SESSION, {
+    userId: 'usr_001',
+    email: 'kunal@snow.app',
+    provider: 'google'
+  }),
+  setAuthSession: (session: AuthSession) => setItem(STORAGE_KEYS.AUTH_SESSION, session),
+  clearAuthSession: () => localStorage.removeItem(STORAGE_KEYS.AUTH_SESSION),
+
+  // AUTH TOKENS
+  getTokens: (): { accessToken: string | null; refreshToken: string | null } => ({
+    accessToken: localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN),
+    refreshToken: localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN)
+  }),
+  setTokens: (accessToken: string, refreshToken: string) => {
+    localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, accessToken);
+    localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+  },
+  clearTokens: () => {
+    localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+    localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
+  },
 
   resetAll: () => {
     localStorage.clear();

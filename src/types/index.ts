@@ -191,6 +191,7 @@ export interface WeeklyReview {
 export interface User {
   id: string;
   name: string;
+  email?: string;
   title: string;
   winterArcStartDate: string;
   currentDayIndex: number;
@@ -487,4 +488,63 @@ export interface WorkspacePreferences {
 }
 
 export type WorkspacePreset = 'Full Life' | 'Productivity' | 'Finance' | 'Health' | 'Developer';
+
+// DAILY PROGRESS & DISTRACTION CALENDAR
+export type DailyProgressStatus = 'excellent' | 'good' | 'neutral' | 'distracted' | 'poor' | 'no_data';
+
+export interface DistractionEvent {
+  source: string;
+  minutes: number;
+  reason?: string;
+}
+
+export interface DailyProgress {
+  date: string; // YYYY-MM-DD
+  status: DailyProgressStatus;
+  progressScore?: number; // 0 - 100
+  goalsCompleted?: number;
+  goalsTotal?: number;
+  learningMinutes?: number;
+  focusMinutes?: number;
+  distractionMinutes?: number;
+  importantActivities?: string[];
+  distractions?: DistractionEvent[];
+  reflection?: string;
+}
+
+export interface DailyProgressResponse {
+  date: string;
+  status: DailyProgressStatus;
+  progressScore: number;
+  evidence: {
+    goalsCompleted: number;
+    goalsTotal: number;
+    learningMinutes: number;
+    focusMinutes: number;
+    distractionMinutes: number;
+  };
+  distractions: DistractionEvent[];
+  reflection?: string;
+}
+
+// AUTH SESSION
+export interface AuthSession {
+  userId: string;
+  email?: string;
+  provider?: 'google' | 'email';
+  expiresAt?: string;
+}
+
+// LEGACY ARC CALENDAR TYPES (backward compatibility)
+export type ArcDayProgressStatus = 'progress' | 'distracted' | 'rest' | 'upcoming';
+
+export interface ArcCalendarDay {
+  date: string; // YYYY-MM-DD
+  dayIndex?: number;
+  status: ArcDayProgressStatus;
+  reason: string; // Reason for progress or distraction
+  deepWorkHours?: number;
+  tags?: string[];
+  updatedAt?: string;
+}
 

@@ -23,6 +23,8 @@ interface AppShellProps {
   onAddExpense: (data: { title: string; amount: number; category: CategoryType }) => void;
   onAddLogTime: (data: { activity: string; minutes: number; category: 'Work' | 'Learning' | 'Health' | 'Personal' }) => void;
   workspacePreferences?: WorkspacePreferences;
+  onOpenCalendar?: () => void;
+  onLogout?: () => void;
 }
 
 export const AppShell: React.FC<AppShellProps> = ({
@@ -38,7 +40,9 @@ export const AppShell: React.FC<AppShellProps> = ({
   onAddUniversalDump,
   onAddExpense,
   onAddLogTime,
-  workspacePreferences
+  workspacePreferences,
+  onOpenCalendar,
+  onLogout
 }) => {
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const [isCheckpointOpen, setIsCheckpointOpen] = useState(false);
@@ -81,6 +85,7 @@ export const AppShell: React.FC<AppShellProps> = ({
         currentRoute={currentRoute}
         onNavigate={onNavigate}
         onOpenQuickAdd={() => setIsQuickAddOpen(true)}
+        onOpenCalendar={onOpenCalendar}
         user={user}
         unreadInboxCount={unreadInboxCount}
         workspacePreferences={workspacePreferences}
@@ -94,6 +99,7 @@ export const AppShell: React.FC<AppShellProps> = ({
           notifications={notifications}
           onOpenNotifications={() => setIsNotifOpen(true)}
           onOpenCheckpoint={() => setIsCheckpointOpen(true)}
+          onLogout={onLogout}
           isOffline={isOffline}
         />
 

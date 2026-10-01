@@ -23,7 +23,8 @@ import {
   MessageSquare,
   ChevronDown,
   ChevronUp,
-  Layers
+  Layers,
+  Calendar
 } from 'lucide-react';
 import { User, WorkspacePreferences, ModuleId } from '../types';
 
@@ -31,6 +32,7 @@ interface DesktopSidebarProps {
   currentRoute: string;
   onNavigate: (route: string) => void;
   onOpenQuickAdd: () => void;
+  onOpenCalendar?: () => void;
   user: User;
   unreadInboxCount: number;
   workspacePreferences?: WorkspacePreferences;
@@ -53,6 +55,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
   currentRoute,
   onNavigate,
   onOpenQuickAdd,
+  onOpenCalendar,
   user,
   unreadInboxCount,
   workspacePreferences
@@ -291,19 +294,36 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
         </div>
       </div>
 
-      {/* User Footer */}
+      {/* User Footer: Click to open Winter Arc Progress & Distraction Calendar */}
       <div className="p-3 border-t border-amber-500/20 bg-[#12100e]">
-        <div className="flex items-center gap-3 p-2 rounded-xl bg-[#1c1815] border border-amber-500/15">
-          <img
-            src={user.avatarUrl}
-            alt={user.name}
-            className="w-8 h-8 rounded-full border border-amber-500/40 object-cover"
-          />
-          <div className="flex-1 min-w-0">
-            <div className="text-xs font-bold text-amber-100 truncate">{user.name}</div>
-            <div className="text-[10px] text-amber-400/80 truncate">Day {user.currentDayIndex} of Winter Arc</div>
+        <button
+          onClick={onOpenCalendar}
+          className="w-full flex items-center gap-3 p-2 rounded-2xl bg-[#1c1815] hover:bg-[#25201c] border border-amber-500/15 hover:border-amber-500/40 transition-all group text-left cursor-pointer shadow-sm hover:shadow-amber-950/40"
+          title="Click to view Winter Arc Progress & Distraction Calendar"
+        >
+          <div className="relative">
+            <img
+              src={user.avatarUrl}
+              alt={user.name}
+              className="w-8 h-8 rounded-full border border-amber-500/40 object-cover group-hover:scale-105 transition-transform"
+            />
+            {/* Live arc status indicator badge */}
+            <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[#1c1815] shadow-[0_0_6px_rgba(16,185,129,0.8)]" />
           </div>
-        </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-amber-100 group-hover:text-amber-300 transition-colors truncate">
+                {user.name}
+              </span>
+              <Calendar className="w-3.5 h-3.5 text-amber-400/60 group-hover:text-amber-400 transition-colors shrink-0" />
+            </div>
+            <div className="text-[10px] text-amber-400/80 group-hover:text-amber-300 transition-colors truncate flex items-center gap-1">
+              <span>Day {user.currentDayIndex} of Arc</span>
+              <span>•</span>
+              <span className="text-emerald-400 font-semibold">Calendar</span>
+            </div>
+          </div>
+        </button>
       </div>
     </aside>
   );

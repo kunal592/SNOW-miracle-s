@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, Wifi, WifiOff, Sparkles, Snowflake } from 'lucide-react';
+import { Bell, Wifi, WifiOff, Sparkles, Snowflake, LogOut } from 'lucide-react';
 import { User, Notification } from '../types';
 
 interface TopBarProps {
@@ -8,6 +8,7 @@ interface TopBarProps {
   notifications: Notification[];
   onOpenNotifications: () => void;
   onOpenCheckpoint: () => void;
+  onLogout?: () => void;
   isOffline?: boolean;
 }
 
@@ -17,6 +18,7 @@ export const TopBar: React.FC<TopBarProps> = ({
   notifications,
   onOpenNotifications,
   onOpenCheckpoint,
+  onLogout,
   isOffline = false
 }) => {
   const unreadCount = notifications.filter((n) => !n.isRead).length;
@@ -50,7 +52,7 @@ export const TopBar: React.FC<TopBarProps> = ({
       {/* Right Action Icons */}
       <div className="flex items-center gap-2">
         {/* Sync Status Badge */}
-        <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#26201b] border border-amber-500/20 text-[11px] text-amber-300 font-medium">
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#26201b] border border-amber-500/20 text-[11px] text-amber-300 font-medium">
           {isOffline ? (
             <>
               <WifiOff className="w-3.5 h-3.5 text-rose-400" />
@@ -58,11 +60,23 @@ export const TopBar: React.FC<TopBarProps> = ({
             </>
           ) : (
             <>
-              <Wifi className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="text-emerald-400 font-bold text-xs">✓</span>
               <span>Synced</span>
             </>
           )}
         </div>
+
+        {/* Logout Option next to Synced */}
+        {onLogout && (
+          <button
+            onClick={onLogout}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#26201b] hover:bg-rose-950/40 border border-amber-500/20 hover:border-rose-500/40 text-[11px] text-neutral-300 hover:text-rose-300 font-medium transition cursor-pointer group"
+            title="Log out"
+          >
+            <LogOut className="w-3.5 h-3.5 text-neutral-400 group-hover:text-rose-400 transition" />
+            <span className="hidden sm:inline">Logout</span>
+          </button>
+        )}
 
         {/* Demo Checkpoint Trigger Button */}
         <button

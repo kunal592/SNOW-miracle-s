@@ -61,6 +61,11 @@ import { AIActivityLogView } from './views/AIActivityLogView';
 import { AIProfileImportView } from './views/AIProfileImportView';
 import { WorkspaceCustomizationView } from './views/WorkspaceCustomizationView';
 import { OnboardingImportModal } from './components/OnboardingImportModal';
+import { DailyProgressCalendarModal } from './components/DailyProgressCalendarModal';
+import { LogoutConfirmModal } from './components/LogoutConfirmModal';
+import { ArcCalendarModal } from './components/ArcCalendarModal';
+import { AuthModal } from './components/AuthModal';
+import { api } from './lib/api';
 import { WorkspacePreferences } from './types';
 
 export function App() {
@@ -97,6 +102,28 @@ export function App() {
 
   // Toast System State
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+
+  // Daily Progress Calendar & Logout Confirmation Modals
+  const [isDailyCalendarOpen, setIsDailyProgressCalendarOpen] = useState(false);
+  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  // Logout confirmation flow according to specification
+  const handleLogoutClick = () => {
+    setIsLogoutConfirmOpen(true);
+  };
+
+  const handleConfirmLogout = async () => {
+    try {
+      await api.auth.logout();
+    } catch (err) {
+      console.warn('Backend logout call:', err);
+    }
+    Storage.clearAuthSession();
+    Storage.clearTokens();
+    handleShowToast('Logged out. Your data is safely synced.', 'info');
+    setIsAuthModalOpen(true);
+  };
 
   // Dynamic Visual Aesthetics Theme switcher effect
   useEffect(() => {
@@ -512,6 +539,8 @@ export function App() {
             categories={Storage.getCategories()}
             onShowToast={handleShowToast}
             onNavigate={handleNavigate}
+            onOpenCalendar={() => setIsDailyProgressCalendarOpen(true)}
+            onLogout={handleLogoutClick}
           />
         );
       case '/settings/workspace':
@@ -592,6 +621,8 @@ export function App() {
       onShowToast={handleShowToast}
       inbox={inbox}
       workspacePreferences={workspacePreferences}
+      onOpenCalendar={() => setIsDailyProgressCalendarOpen(true)}
+      onLogout={handleLogoutClick}
       onAddUniversalDump={handleAddUniversalDump}
       onAddExpense={handleAddExpense}
       onAddLogTime={(data) => {
@@ -607,6 +638,33 @@ export function App() {
       }}
     >
       {renderView()}
+
+      {/* Daily Progress & Distraction Calendar Modal (Profile Card Click) */}
+      <DailyProgressCalendarModal
+        isOpen={isDailyCalendarOpen}
+        onClose={() => setIsDailyProgressCalendarOpen(false)}
+        onViewFullDay={(date) => {
+          handleNavigate('/track');
+        }}
+      />
+
+      {/* Logout Confirmation Dialog (Synced TopBar Action) */}
+      <LogoutConfirmModal
+        isOpen={isLogoutConfirmOpen}
+        onClose={() => setIsLogoutConfirmOpen(false)}
+        onConfirm={handleConfirmLogout}
+      />
+
+      {/* Auth & Re-login Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onLoginSuccess={(authedUser) => {
+          setUser(authedUser);
+          handleShowToast(`Session active as ${authedUser.name}`, 'success');
+        }}
+        onShowToast={handleShowToast}
+      />
     </AppShell>
   );
 }

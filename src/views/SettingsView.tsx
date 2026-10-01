@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, User as UserIcon, Sparkles, Moon, Sun, Bell, Database, ShieldAlert, Trash2, CheckCircle2 } from 'lucide-react';
+import { Settings, User as UserIcon, Sparkles, Moon, Sun, Bell, Database, ShieldAlert, Trash2, CheckCircle2, Calendar, LogOut } from 'lucide-react';
 import { User, Category } from '../types';
 import { Storage } from '../lib/storage';
 
@@ -9,6 +9,8 @@ interface SettingsViewProps {
   categories: Category[];
   onShowToast: (msg: string, type?: 'success' | 'info') => void;
   onNavigate?: (route: string) => void;
+  onOpenCalendar?: () => void;
+  onLogout?: () => void;
 }
 
 export const SettingsView: React.FC<SettingsViewProps> = ({
@@ -16,7 +18,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   onUpdateUser,
   categories,
   onShowToast,
-  onNavigate
+  onNavigate,
+  onOpenCalendar,
+  onLogout
 }) => {
   const [userName, setUserName] = useState(user.name);
   const [userTitle, setUserTitle] = useState(user.title);
@@ -155,6 +159,51 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition"
             >
               <Sparkles className="w-4 h-4" /> Open AI Profile Import Engine
+            </button>
+          </div>
+        </div>
+
+        {/* WINTER ARC PROGRESS & DISTRACTION CALENDAR */}
+        <div className="p-6 rounded-3xl bg-[#1c1815] border border-amber-500/30 shadow-md space-y-3 relative overflow-hidden">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-bold text-amber-100 font-outfit flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-amber-400" /> Winter Arc Progress & Distraction Calendar
+            </h2>
+            <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
+              ACTIVE TRACKER
+            </span>
+          </div>
+
+          <p className="text-xs text-neutral-300 leading-relaxed">
+            View your daily calendar blocks color-coded in green (progress) and red (distracted), inspect reasons for each day, or log today's discipline status.
+          </p>
+
+          <div className="pt-2 flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onOpenCalendar}
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:brightness-110 text-neutral-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-950/60 transition cursor-pointer"
+            >
+              <Calendar className="w-4 h-4" /> Open Calendar View Modal
+            </button>
+          </div>
+        </div>
+
+        {/* ACCOUNT SESSION & LOGOUT */}
+        <div className="p-6 rounded-3xl bg-[#1c1815] border border-amber-500/20 shadow-md space-y-3">
+          <h2 className="text-base font-bold text-amber-100 font-outfit flex items-center gap-2">
+            <UserIcon className="w-4 h-4 text-amber-400" /> Account Identity & Session
+          </h2>
+          <p className="text-xs text-neutral-400 leading-relaxed">
+            Signed in as <span className="text-amber-200 font-semibold">{user.name}</span> ({user.email || 'kunal@snow.app'}). You can log out to switch accounts or re-authenticate via Google or Email.
+          </p>
+          <div className="pt-1 flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onLogout}
+              className="px-4 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/40 text-rose-300 font-bold text-xs flex items-center gap-2 transition cursor-pointer"
+            >
+              <LogOut className="w-4 h-4" /> Log Out of Winter Arc Session
             </button>
           </div>
         </div>

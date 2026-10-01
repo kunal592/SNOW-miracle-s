@@ -23,7 +23,11 @@ import {
   AIActivity,
   MilestonePaceAnalysis,
   DailyBrief,
-  WeeklyReview
+  WeeklyReview,
+  ArcCalendarDay,
+  DailyProgress,
+  DailyProgressStatus,
+  DistractionEvent
 } from '../types';
 
 // EXISTING BASE MOCK DATA
@@ -1162,5 +1166,574 @@ export const initialAIActivityLogs: AIActivity[] = [
     action: 'Generated Daily AI Brief & Focus Recommendation.',
     module: 'Supervisor',
     details: 'Identified learning block protection as top daily focus.'
+  }
+];
+
+// WINTER ARC PROGRESS & DISTRACTION CALENDAR DATA
+export const initialArcCalendarDays: ArcCalendarDay[] = [
+  // September 2026 History
+  {
+    date: '2026-09-10',
+    dayIndex: -19,
+    status: 'progress',
+    reason: 'Deep work 4.5h on architecture specs, woke up at 5:45 AM, completed 5km run without skipping.',
+    deepWorkHours: 4.5,
+    tags: ['Deep Work', 'Workout', 'Early Wakeup']
+  },
+  {
+    date: '2026-09-11',
+    dayIndex: -18,
+    status: 'progress',
+    reason: 'Built initial database schemas, zero social media usage during morning block, clean nutrition.',
+    deepWorkHours: 4.0,
+    tags: ['Database', 'Clean Diet']
+  },
+  {
+    date: '2026-09-12',
+    dayIndex: -17,
+    status: 'distracted',
+    reason: 'Doomscrolled Twitter and Reddit for 3.2 hours in the afternoon. Brain fog led to skipping scheduled workout.',
+    deepWorkHours: 1.0,
+    tags: ['Doomscrolling', 'Skipped Workout', 'Brain Fog']
+  },
+  {
+    date: '2026-09-13',
+    dayIndex: -16,
+    status: 'distracted',
+    reason: 'Binge watched YouTube tech reviews for 4 hours, sleep schedule slipped past 1:30 AM, zero code commits.',
+    deepWorkHours: 0.5,
+    tags: ['YouTube Rabbit Hole', 'Sleep Slipped']
+  },
+  {
+    date: '2026-09-14',
+    dayIndex: -15,
+    status: 'progress',
+    reason: 'Rebounded strong: 5 hours of deep coding on authentication, morning cold shower, zero junk food.',
+    deepWorkHours: 5.0,
+    tags: ['Deep Work', 'Rebound', 'Cold Shower']
+  },
+  {
+    date: '2026-09-15',
+    dayIndex: -14,
+    status: 'progress',
+    reason: 'Completed 3 Pomodoro blocks on Go Gin routing, read 25 pages of System Design book, tracked all expenses.',
+    deepWorkHours: 4.0,
+    tags: ['Reading', 'Go', 'Pomodoro']
+  },
+  {
+    date: '2026-09-16',
+    dayIndex: -13,
+    status: 'progress',
+    reason: 'High energy day: Knocked out consumption engine logic, prepped healthy meals for the week, lifted heavy.',
+    deepWorkHours: 4.5,
+    tags: ['Meal Prep', 'Gym', 'Execution']
+  },
+  {
+    date: '2026-09-17',
+    dayIndex: -12,
+    status: 'distracted',
+    reason: 'Context switching between 6 different messaging apps. Lost 2 hours arguing in Discord channels, zero deep work.',
+    deepWorkHours: 1.5,
+    tags: ['Discord', 'Context Switching', 'Unfocused']
+  },
+  {
+    date: '2026-09-18',
+    dayIndex: -11,
+    status: 'progress',
+    reason: 'Phone locked in drawer during 9 AM - 2 PM work block. Successfully implemented Postgres migrations.',
+    deepWorkHours: 5.0,
+    tags: ['Phone Locked', 'Monk Mode', 'PostgreSQL']
+  },
+  {
+    date: '2026-09-19',
+    dayIndex: -10,
+    status: 'progress',
+    reason: 'Weekend deep review: Finished Go test suites, logged 8km trail run, zero alcohol or processed sugars.',
+    deepWorkHours: 3.5,
+    tags: ['Testing', 'Trail Run', 'Clean Eating']
+  },
+  {
+    date: '2026-09-20',
+    dayIndex: -9,
+    status: 'rest',
+    reason: 'Scheduled active recovery: Nature walk, stretching, mental reset and journaling.',
+    deepWorkHours: 0,
+    tags: ['Active Recovery', 'Nature Walk']
+  },
+  {
+    date: '2026-09-21',
+    dayIndex: -8,
+    status: 'progress',
+    reason: 'Crushed week kickoff: 5.5 hours deep work on life logging modules, hit all hydration and protein goals.',
+    deepWorkHours: 5.5,
+    tags: ['Deep Work', 'Hydration', 'Protein']
+  },
+  {
+    date: '2026-09-22',
+    dayIndex: -7,
+    status: 'progress',
+    reason: 'Solved 2 hard Cognitive Lab reasoning questions, built fuel mileage calculator, disciplined sleep by 10:30 PM.',
+    deepWorkHours: 4.2,
+    tags: ['Cognitive Lab', 'Early Sleep']
+  },
+  {
+    date: '2026-09-23',
+    dayIndex: -6,
+    status: 'distracted',
+    reason: 'Impulse spent ₹3,400 online, spent 2.5 hours browsing sale items instead of finishing quarterly milestone review.',
+    deepWorkHours: 1.2,
+    tags: ['Impulse Shopping', 'Procrastination']
+  },
+  {
+    date: '2026-09-24',
+    dayIndex: -5,
+    status: 'progress',
+    reason: 'Re-centered focus: Cut off notifications, logged 4 hours on AI Supervisor prompt engineering, clean eating.',
+    deepWorkHours: 4.0,
+    tags: ['AI Supervisor', 'No Notifications']
+  },
+  {
+    date: '2026-09-25',
+    dayIndex: -4,
+    status: 'progress',
+    reason: 'Wrote comprehensive export generator, 45-min kettlebell workout, zero afternoon caffeine crash.',
+    deepWorkHours: 4.8,
+    tags: ['Kettlebell', 'Code Export']
+  },
+  {
+    date: '2026-09-26',
+    dayIndex: -3,
+    status: 'progress',
+    reason: 'Completed 6 hours of flow state development on automation ticker & reconciliation routines.',
+    deepWorkHours: 6.0,
+    tags: ['Flow State', 'Automation']
+  },
+  {
+    date: '2026-09-27',
+    dayIndex: -2,
+    status: 'distracted',
+    reason: 'Stayed up watching Netflix series until 3:00 AM, woke up exhausted at 11 AM, struggled with fatigue all day.',
+    deepWorkHours: 0.8,
+    tags: ['Late Netflix', 'Sleep Deprived', 'Low Energy']
+  },
+  {
+    date: '2026-09-28',
+    dayIndex: -1,
+    status: 'progress',
+    reason: 'Pre-Winter Arc reset: Cleaned desk workspace, drafted 90-day targets, slept at 10 PM sharp.',
+    deepWorkHours: 3.5,
+    tags: ['Workspace Reset', 'Arc Goals', 'Discipline']
+  },
+  {
+    date: '2026-09-29',
+    dayIndex: 1,
+    status: 'progress',
+    reason: 'DAY 1 OF WINTER ARC OFFICIALLY LAUNCHED! 4h 30m deep work on SNOW, zero sugar, 100% adherence to rules.',
+    deepWorkHours: 4.5,
+    tags: ['Winter Arc Day 1', 'Strict Protocol', 'Victory']
+  },
+  {
+    date: '2026-09-30',
+    dayIndex: 2,
+    status: 'progress',
+    reason: 'Day 2 Arc: High mental clarity, implemented tabs customization, logged 100% of food and fuel, hit 10k steps.',
+    deepWorkHours: 5.0,
+    tags: ['10k Steps', 'Full Tracking', 'Zone']
+  },
+  {
+    date: '2026-10-01',
+    dayIndex: 3,
+    status: 'progress',
+    reason: 'TODAY: Built Winter Arc Calendar & auth integrations, maintained unwavering monk-mode discipline.',
+    deepWorkHours: 4.5,
+    tags: ['Monk Mode', 'Frontend & Backend Sync', 'Today']
+  }
+];
+
+// DAILY PROGRESS & DISTRACTION HISTORY (Multi-level, evidence-based)
+export const initialDailyProgressHistory: DailyProgress[] = [
+  {
+    date: '2026-09-07',
+    status: 'neutral',
+    progressScore: 62,
+    goalsCompleted: 2,
+    goalsTotal: 4,
+    learningMinutes: 60,
+    focusMinutes: 180,
+    distractionMinutes: 65,
+    importantActivities: ['Sprint planning', 'Light jog 3km', 'Email triage'],
+    distractions: [
+      { source: 'Slack & Email', minutes: 45, reason: 'Frequent notification checking during work block' },
+      { source: 'News Feeds', minutes: 20, reason: 'Morning browsing habit' }
+    ],
+    reflection: 'Moderate focus day. Met baseline commitments but lacked deep uninterrupted blocks.'
+  },
+  {
+    date: '2026-09-08',
+    status: 'excellent',
+    progressScore: 94,
+    goalsCompleted: 4,
+    goalsTotal: 4,
+    learningMinutes: 120,
+    focusMinutes: 360,
+    distractionMinutes: 20,
+    importantActivities: ['Shipped Go database schema', 'Deep learning session', 'Gym strength session'],
+    distractions: [
+      { source: 'WhatsApp', minutes: 20, reason: 'Family coordination' }
+    ],
+    reflection: 'Exceptional deep work rhythm. 6 hours of flow with phone kept outside the room.'
+  },
+  {
+    date: '2026-09-09',
+    status: 'good',
+    progressScore: 81,
+    goalsCompleted: 3,
+    goalsTotal: 4,
+    learningMinutes: 90,
+    focusMinutes: 290,
+    distractionMinutes: 45,
+    importantActivities: ['Postgres index optimization', 'Review queue triage', 'Meal prep'],
+    distractions: [
+      { source: 'Twitter/X', minutes: 30, reason: 'Checked developer launch threads' },
+      { source: 'YouTube', minutes: 15, reason: 'Background music video rabbit hole' }
+    ],
+    reflection: 'Steady execution throughout the morning. Minor afternoon slowdown.'
+  },
+  {
+    date: '2026-09-10',
+    status: 'distracted',
+    progressScore: 58,
+    goalsCompleted: 3,
+    goalsTotal: 4,
+    learningMinutes: 160,
+    focusMinutes: 255,
+    distractionMinutes: 110,
+    importantActivities: ['Go router implementation', '2h 40m learning algorithms', 'Expense tracking'],
+    distractions: [
+      { source: 'Instagram', minutes: 72, reason: 'Boredom loop after returning from work' },
+      { source: 'YouTube', minutes: 38, reason: 'Algorithm tutorial auto-play tangents' }
+    ],
+    reflection: 'Lost focus after returning from work. Solid learning time logged, but high evening screen distractions.'
+  },
+  {
+    date: '2026-09-11',
+    status: 'good',
+    progressScore: 84,
+    goalsCompleted: 3,
+    goalsTotal: 3,
+    learningMinutes: 75,
+    focusMinutes: 310,
+    distractionMinutes: 35,
+    importantActivities: ['Auth service implementation', 'Fuel mileage logging', 'Evening walk 6km'],
+    distractions: [
+      { source: 'Reddit', minutes: 35, reason: 'Browsed r/golang discussions during lunch' }
+    ],
+    reflection: 'Maintained clear focus blocks during the workday. All daily targets completed.'
+  },
+  {
+    date: '2026-09-12',
+    status: 'distracted',
+    progressScore: 48,
+    goalsCompleted: 1,
+    goalsTotal: 4,
+    learningMinutes: 30,
+    focusMinutes: 120,
+    distractionMinutes: 192,
+    importantActivities: ['Bug fixing session', 'Grocery store run'],
+    distractions: [
+      { source: 'Twitter/X', minutes: 115, reason: 'Political commentary threads and heated discourse' },
+      { source: 'Reddit', minutes: 77, reason: 'Casual gaming and tech threads' }
+    ],
+    reflection: 'Afternoon brain fog led to prolonged social media scrolling and skipping the scheduled evening workout.'
+  },
+  {
+    date: '2026-09-13',
+    status: 'poor',
+    progressScore: 28,
+    goalsCompleted: 0,
+    goalsTotal: 3,
+    learningMinutes: 15,
+    focusMinutes: 60,
+    distractionMinutes: 240,
+    importantActivities: ['Short journal reflection', 'Basic inbox triage'],
+    distractions: [
+      { source: 'YouTube Tech Reviews', minutes: 165, reason: 'Binge-watched gadget unboxings without intent' },
+      { source: 'Mobile Gaming', minutes: 75, reason: 'Late night avoidance behavior' }
+    ],
+    reflection: 'High friction and fatigue throughout the day. Bedtime slipped past 1:45 AM, leading to zero commits.'
+  },
+  {
+    date: '2026-09-14',
+    status: 'excellent',
+    progressScore: 92,
+    goalsCompleted: 4,
+    goalsTotal: 4,
+    learningMinutes: 135,
+    focusMinutes: 380,
+    distractionMinutes: 25,
+    importantActivities: ['Argon2id password hashing', 'Cold morning shower', 'Kettlebell workout 45m'],
+    distractions: [
+      { source: 'WhatsApp', minutes: 25, reason: 'Quick messages between coding blocks' }
+    ],
+    reflection: 'Strong rebound. Woke up with decisive intent, locked phone away, and finished 5+ hours of productive work.'
+  },
+  {
+    date: '2026-09-15',
+    status: 'good',
+    progressScore: 79,
+    goalsCompleted: 3,
+    goalsTotal: 4,
+    learningMinutes: 80,
+    focusMinutes: 270,
+    distractionMinutes: 40,
+    importantActivities: ['JWT rotation logic', 'Reading System Design book (25 pages)', 'Tracked expenses'],
+    distractions: [
+      { source: 'Hacker News', minutes: 40, reason: 'Read distributed systems architecture discussions' }
+    ],
+    reflection: 'Consistent execution. Pomodoro timers helped protect the morning block from interruptions.'
+  },
+  {
+    date: '2026-09-16',
+    status: 'neutral',
+    progressScore: 65,
+    goalsCompleted: 2,
+    goalsTotal: 3,
+    learningMinutes: 45,
+    focusMinutes: 200,
+    distractionMinutes: 55,
+    importantActivities: ['Life logging schema updates', 'Admin paperwork', 'Evening stretch'],
+    distractions: [
+      { source: 'Instagram', minutes: 35, reason: 'Unconscious reel scrolling before dinner' },
+      { source: 'Email', minutes: 20, reason: 'Over-checking promotional inbox' }
+    ],
+    reflection: 'Average output day. Handled routine operations without breakthrough focus.'
+  },
+  {
+    date: '2026-09-17',
+    status: 'distracted',
+    progressScore: 50,
+    goalsCompleted: 1,
+    goalsTotal: 4,
+    learningMinutes: 40,
+    focusMinutes: 140,
+    distractionMinutes: 135,
+    importantActivities: ['Reviewed PR feedback', 'Completed daily food log'],
+    distractions: [
+      { source: 'Discord Communities', minutes: 90, reason: 'Prolonged chat debates during afternoon focus window' },
+      { source: 'Telegram Groups', minutes: 45, reason: 'Crypto/market notification checks' }
+    ],
+    reflection: 'Multi-app context switching fragmented attention. Little sustained progress achieved.'
+  },
+  {
+    date: '2026-09-18',
+    status: 'excellent',
+    progressScore: 95,
+    goalsCompleted: 4,
+    goalsTotal: 4,
+    learningMinutes: 110,
+    focusMinutes: 375,
+    distractionMinutes: 15,
+    importantActivities: ['Postgres migration execution', 'Cognitive Lab challenge #1', 'Cardio 5km'],
+    distractions: [
+      { source: 'Phone Call', minutes: 15, reason: 'Urgent family catch-up' }
+    ],
+    reflection: 'Monk mode adhered to strictly from 8:30 AM to 2:30 PM. Peak cognitive output.'
+  },
+  {
+    date: '2026-09-19',
+    status: 'good',
+    progressScore: 82,
+    goalsCompleted: 3,
+    goalsTotal: 3,
+    learningMinutes: 90,
+    focusMinutes: 260,
+    distractionMinutes: 35,
+    importantActivities: ['Unit test suites in Go', 'Trail run 8km', 'Clean nutrition diary'],
+    distractions: [
+      { source: 'YouTube', minutes: 35, reason: 'Trail running gear comparisons' }
+    ],
+    reflection: 'Active weekend day with disciplined code tests and outdoor physical exertion.'
+  },
+  {
+    date: '2026-09-20',
+    status: 'neutral',
+    progressScore: 68,
+    goalsCompleted: 2,
+    goalsTotal: 2,
+    learningMinutes: 30,
+    focusMinutes: 120,
+    distractionMinutes: 40,
+    importantActivities: ['Active recovery walk', 'Weekly review reflection', 'Mindfulness meditation'],
+    distractions: [
+      { source: 'Podcasts', minutes: 40, reason: 'Casual audio listening' }
+    ],
+    reflection: 'Scheduled rest and mental consolidation. Kept screen habits calm and low stimulation.'
+  },
+  {
+    date: '2026-09-21',
+    status: 'excellent',
+    progressScore: 90,
+    goalsCompleted: 4,
+    goalsTotal: 4,
+    learningMinutes: 125,
+    focusMinutes: 390,
+    distractionMinutes: 22,
+    importantActivities: ['Time tracking backend endpoints', 'Hydration target 3.5L', 'Protein goals met'],
+    distractions: [
+      { source: 'Twitter/X', minutes: 22, reason: 'Checked release notes during scheduled break' }
+    ],
+    reflection: 'Strong Monday discipline. Set clear priorities early and executed without hesitation.'
+  },
+  {
+    date: '2026-09-22',
+    status: 'excellent',
+    progressScore: 88,
+    goalsCompleted: 3,
+    goalsTotal: 3,
+    learningMinutes: 105,
+    focusMinutes: 340,
+    distractionMinutes: 30,
+    importantActivities: ['Cognitive reasoning evaluations', 'Fuel mileage automation', 'In bed by 10:30 PM'],
+    distractions: [
+      { source: 'Instagram', minutes: 30, reason: 'Casual evening catchup' }
+    ],
+    reflection: 'Deep problem-solving in Cognitive Lab. Sleeping early had noticeable positive effect on focus.'
+  },
+  {
+    date: '2026-09-23',
+    status: 'distracted',
+    progressScore: 52,
+    goalsCompleted: 2,
+    goalsTotal: 4,
+    learningMinutes: 45,
+    focusMinutes: 170,
+    distractionMinutes: 145,
+    importantActivities: ['Updated milestone status', 'Bank statement review'],
+    distractions: [
+      { source: 'E-commerce Shopping', minutes: 95, reason: 'Browsed electronics deals and added items to cart' },
+      { source: 'YouTube Reviews', minutes: 50, reason: 'Spec comparisons for tech gear' }
+    ],
+    reflection: 'Shopping rabbit hole hijacked the late afternoon. Delayed the evening milestone reconciliation.'
+  },
+  {
+    date: '2026-09-24',
+    status: 'good',
+    progressScore: 85,
+    goalsCompleted: 3,
+    goalsTotal: 4,
+    learningMinutes: 85,
+    focusMinutes: 320,
+    distractionMinutes: 28,
+    importantActivities: ['AI Supervisor prompt engineering', 'Muted non-urgent notifications', 'Clean diet'],
+    distractions: [
+      { source: 'WhatsApp', minutes: 28, reason: 'Project partner sync' }
+    ],
+    reflection: 'Cut off push alerts and experienced immediate relief from mental scattering.'
+  },
+  {
+    date: '2026-09-25',
+    status: 'good',
+    progressScore: 86,
+    goalsCompleted: 4,
+    goalsTotal: 4,
+    learningMinutes: 95,
+    focusMinutes: 330,
+    distractionMinutes: 32,
+    importantActivities: ['Export generator testing', 'Kettlebell conditioning', 'Hydration tracking'],
+    distractions: [
+      { source: 'Reddit', minutes: 32, reason: 'Tech discussions' }
+    ],
+    reflection: 'Consistent performance without energy crashes. Solid adherence across all tracking metrics.'
+  },
+  {
+    date: '2026-09-26',
+    status: 'excellent',
+    progressScore: 96,
+    goalsCompleted: 5,
+    goalsTotal: 5,
+    learningMinutes: 140,
+    focusMinutes: 420,
+    distractionMinutes: 18,
+    importantActivities: ['Automation ticker routine', 'ChatGPT profile parser', 'Zero junk food intake'],
+    distractions: [
+      { source: 'Email', minutes: 18, reason: 'Weekly summary notification check' }
+    ],
+    reflection: 'Flow state reached for over 5 hours. Shipped major automation features with minimal fatigue.'
+  },
+  {
+    date: '2026-09-27',
+    status: 'poor',
+    progressScore: 35,
+    goalsCompleted: 1,
+    goalsTotal: 4,
+    learningMinutes: 20,
+    focusMinutes: 90,
+    distractionMinutes: 210,
+    importantActivities: ['Basic task review', 'Short recovery walk'],
+    distractions: [
+      { source: 'Netflix Streaming', minutes: 150, reason: 'Binge-watched thriller series until 3:00 AM' },
+      { source: 'Instagram Reels', minutes: 60, reason: 'Morning bed scrolling' }
+    ],
+    reflection: 'Sleep disruption cascaded into whole-day sluggishness. Woke up at 11 AM feeling depleted.'
+  },
+  {
+    date: '2026-09-28',
+    status: 'neutral',
+    progressScore: 71,
+    goalsCompleted: 3,
+    goalsTotal: 4,
+    learningMinutes: 60,
+    focusMinutes: 230,
+    distractionMinutes: 45,
+    importantActivities: ['Workspace preparation', 'Winter Arc planning', 'Early bedtime at 10 PM'],
+    distractions: [
+      { source: 'YouTube', minutes: 45, reason: 'Winter Arc routine videos' }
+    ],
+    reflection: 'Pre-Arc reset day. Organized desk and physical workspace to ensure frictionless launch tomorrow.'
+  },
+  {
+    date: '2026-09-29',
+    status: 'excellent',
+    progressScore: 98,
+    goalsCompleted: 5,
+    goalsTotal: 5,
+    learningMinutes: 150,
+    focusMinutes: 410,
+    distractionMinutes: 12,
+    importantActivities: ['Winter Arc Day 1 launch', 'Complete data tracking', 'Strict nutrition protocol'],
+    distractions: [
+      { source: 'Phone', minutes: 12, reason: 'Quick verification code' }
+    ],
+    reflection: 'Official launch of Winter Arc. Total commitment, high mental sharpness, zero sugar, 100% adherence.'
+  },
+  {
+    date: '2026-09-30',
+    status: 'good',
+    progressScore: 87,
+    goalsCompleted: 4,
+    goalsTotal: 4,
+    learningMinutes: 110,
+    focusMinutes: 340,
+    distractionMinutes: 30,
+    importantActivities: ['Workspace tabs customization', '10k steps logged', 'Consumption engine tracking'],
+    distractions: [
+      { source: 'Twitter/X', minutes: 30, reason: 'Developer reaction thread' }
+    ],
+    reflection: 'Day 2 maintained momentum. All food and fuel expenses recorded immediately.'
+  },
+  {
+    date: '2026-10-01',
+    status: 'excellent',
+    progressScore: 93,
+    goalsCompleted: 4,
+    goalsTotal: 4,
+    learningMinutes: 120,
+    focusMinutes: 360,
+    distractionMinutes: 18,
+    importantActivities: ['Calendar & Top Bar integration', 'Discipline radar update', 'Monk mode adherence'],
+    distractions: [
+      { source: 'Slack', minutes: 18, reason: 'Engineering architecture sync' }
+    ],
+    reflection: 'Clean, focused execution day. Calendar modal and logout flow integrated with existing system.'
   }
 ];
