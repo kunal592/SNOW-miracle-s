@@ -1402,18 +1402,18 @@ export const initialDailyProgressHistory: DailyProgress[] = [
   {
     date: '2026-09-10',
     status: 'distracted',
-    progressScore: 58,
+    progressScore: 78,
     goalsCompleted: 3,
     goalsTotal: 4,
     learningMinutes: 160,
-    focusMinutes: 255,
-    distractionMinutes: 110,
+    focusMinutes: 280,
+    distractionMinutes: 42,
     importantActivities: ['Go router implementation', '2h 40m learning algorithms', 'Expense tracking'],
     distractions: [
-      { source: 'Instagram', minutes: 72, reason: 'Boredom loop after returning from work' },
-      { source: 'YouTube', minutes: 38, reason: 'Algorithm tutorial auto-play tangents' }
+      { source: 'Instagram', minutes: 72, reason: 'Lost focus after returning from work' },
+      { source: 'YouTube', minutes: 38, reason: 'Video browsing' }
     ],
-    reflection: 'Lost focus after returning from work. Solid learning time logged, but high evening screen distractions.'
+    reflection: 'Lost focus after returning from work.'
   },
   {
     date: '2026-09-11',

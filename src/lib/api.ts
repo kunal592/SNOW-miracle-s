@@ -68,5 +68,44 @@ export const api = {
         Storage.clearTokens();
       }
     }
+  },
+
+  activity: {
+    async getDailyRange(from: string, to: string) {
+      const { accessToken } = Storage.getTokens();
+      try {
+        const res = await fetch(`${API_BASE_URL}/activity/daily?from=${from}&to=${to}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {})
+          }
+        });
+        if (!res.ok) throw new Error('Failed to fetch daily activity range');
+        const data = await res.json();
+        return data.data;
+      } catch (err) {
+        console.warn('Backend activity fetch fallback to local storage:', err);
+        return Storage.getDailyProgress();
+      }
+    },
+
+    async getDailyByDate(date: string) {
+      const { accessToken } = Storage.getTokens();
+      try {
+        const res = await fetch(`${API_BASE_URL}/activity/daily/${date}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {})
+          }
+        });
+        if (!res.ok) throw new Error(`Failed to fetch daily activity for ${date}`);
+        const data = await res.json();
+        return data.data;
+      } catch (err) {
+        console.warn('Backend activity fetch fallback to local storage:', err);
+        return Storage.getDailyProgressByDate(date) || null;
+      }
+    }
   }
 };
+

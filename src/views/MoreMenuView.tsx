@@ -17,20 +17,25 @@ import {
   BrainCircuit,
   Award,
   MessageSquare,
-  Database
+  Database,
+  Calendar
 } from 'lucide-react';
-import { WorkspacePreferences, ModuleId } from '../types';
+import { WorkspacePreferences, ModuleId, User } from '../types';
 
 interface MoreMenuViewProps {
   onNavigate: (route: string) => void;
   unreadReviewCount: number;
   workspacePreferences?: WorkspacePreferences;
+  user?: User;
+  onOpenCalendar?: () => void;
 }
 
 export const MoreMenuView: React.FC<MoreMenuViewProps> = ({
   onNavigate,
   unreadReviewCount,
-  workspacePreferences
+  workspacePreferences,
+  user,
+  onOpenCalendar
 }) => {
   const enabledModules = workspacePreferences?.enabledModules;
 
@@ -66,6 +71,36 @@ export const MoreMenuView: React.FC<MoreMenuViewProps> = ({
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
+      {/* USER PROFILE & DAILY PROGRESS CALENDAR CARD */}
+      {user && onOpenCalendar && (
+        <div
+          onClick={onOpenCalendar}
+          className="p-4 rounded-3xl bg-gradient-to-r from-[#1c1815] to-[#25201c] border border-amber-500/25 hover:border-amber-500/50 p-4 flex items-center justify-between cursor-pointer transition shadow-lg group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <img
+                src={user.avatarUrl}
+                alt={user.name}
+                className="w-12 h-12 rounded-full border-2 border-amber-500/40 object-cover group-hover:scale-105 transition-transform"
+              />
+              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[#1c1815] shadow-[0_0_6px_rgba(16,185,129,0.8)]" />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-amber-100 font-outfit group-hover:text-amber-300 transition-colors">
+                {user.name}
+              </div>
+              <div className="text-xs text-amber-400/80">
+                Day {user.currentDayIndex} of Winter Arc • Tap for Progress Calendar
+              </div>
+            </div>
+          </div>
+          <div className="p-2 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 group-hover:scale-105 transition-transform">
+            <Calendar className="w-5 h-5 text-amber-400" />
+          </div>
+        </div>
+      )}
+
       <div>
         <h1 className="text-2xl font-black text-amber-100 font-outfit">SNOW Directory</h1>
         <p className="text-xs text-amber-200/80">Access all personal operating system modules, Cognitive Lab, and AI Supervisor features.</p>

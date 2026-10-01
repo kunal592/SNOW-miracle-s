@@ -99,6 +99,7 @@ export const AppShell: React.FC<AppShellProps> = ({
           notifications={notifications}
           onOpenNotifications={() => setIsNotifOpen(true)}
           onOpenCheckpoint={() => setIsCheckpointOpen(true)}
+          onOpenCalendar={onOpenCalendar}
           onLogout={onLogout}
           isOffline={isOffline}
         />

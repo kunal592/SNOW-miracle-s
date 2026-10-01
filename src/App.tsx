@@ -582,6 +582,8 @@ export function App() {
             onNavigate={handleNavigate}
             unreadReviewCount={unreadReviewCount}
             workspacePreferences={workspacePreferences}
+            user={user}
+            onOpenCalendar={() => setIsDailyProgressCalendarOpen(true)}
           />
         );
       default:
