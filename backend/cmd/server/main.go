@@ -16,10 +16,13 @@ import (
 	"github.com/kunal/snow/config"
 	"github.com/kunal/snow/internal/analytics"
 	"github.com/kunal/snow/internal/auth"
+	"github.com/kunal/snow/internal/automation"
 	"github.com/kunal/snow/internal/cognitive"
 	"github.com/kunal/snow/internal/consumption"
 	"github.com/kunal/snow/internal/expenses"
+	"github.com/kunal/snow/internal/exporter"
 	"github.com/kunal/snow/internal/goals"
+	"github.com/kunal/snow/internal/importer"
 	"github.com/kunal/snow/internal/inbox"
 	"github.com/kunal/snow/internal/learning"
 	"github.com/kunal/snow/internal/lifelog"
@@ -117,6 +120,15 @@ func main() {
 	analyticsSvc := analytics.NewService(pool)
 	cognitiveSvc := cognitive.NewService(pool)
 	supervisorSvc := supervisor.NewService(pool)
+	importerSvc := importer.NewService(pool)
+	exporterSvc := exporter.NewService(pool)
+
+	automationSvc, aErr := automation.NewService(pool, cfg.Redis.URL, log)
+	if aErr != nil {
+		log.Warn("automation service could not connect to redis, operating with database fallback", zap.Error(aErr))
+	} else {
+		automationSvc.StartBackgroundTicker(ctx, 30*time.Minute)
+	}
 
 	// ---- Build handlers ------------------------------------------------
 	authHandler := auth.NewHandler(authSvc, cfg.Google.ClientID, cfg.Google.ClientSecret, cfg.Google.RedirectURL, cfg.Frontend)
@@ -133,6 +145,13 @@ func main() {
 	analyticsHandler := analytics.NewHandler(analyticsSvc)
 	cognitiveHandler := cognitive.NewHandler(cognitiveSvc)
 	supervisorHandler := supervisor.NewHandler(supervisorSvc)
+	importerHandler := importer.NewHandler(importerSvc)
+	exporterHandler := exporter.NewHandler(exporterSvc)
+
+	var automationHandler *automation.Handler
+	if automationSvc != nil {
+		automationHandler = automation.NewHandler(automationSvc)
+	}
 
 	// ---- API routes ----------------------------------------------------
 	api := r.Group("/api/v1")
@@ -157,6 +176,11 @@ func main() {
 		analyticsHandler.RegisterRoutes(protected)
 		cognitiveHandler.RegisterRoutes(protected)
 		supervisorHandler.RegisterRoutes(protected)
+		importerHandler.RegisterRoutes(protected)
+		exporterHandler.RegisterRoutes(protected)
+		if automationHandler != nil {
+			automationHandler.RegisterRoutes(protected)
+		}
 	}
 
 	// ---- Start server --------------------------------------------------
