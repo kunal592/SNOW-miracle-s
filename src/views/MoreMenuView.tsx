@@ -18,7 +18,8 @@ import {
   Award,
   MessageSquare,
   Database,
-  Calendar
+  Calendar,
+  Dna
 } from 'lucide-react';
 import { WorkspacePreferences, ModuleId, User } from '../types';
 
@@ -49,6 +50,7 @@ export const MoreMenuView: React.FC<MoreMenuViewProps> = ({
     { route: '/settings/workspace', label: 'Customize Workspace', icon: Sparkles, desc: 'Show/hide modules & launch route' },
     { route: '/cognitive', label: 'Cognitive Lab', icon: BrainCircuit, desc: 'Train reasoning & problem solving', moduleId: 'cognitive' as ModuleId },
     { route: '/cognitive/profile', label: 'Cognitive Skill Profile (TPI)', icon: Award, desc: 'Radar chart across 8 skills', moduleId: 'cognitive' as ModuleId },
+    { route: '/evolution', label: 'Evolution & Dossier', icon: Dna, desc: 'Behavioral mirror & stages timeline', moduleId: 'evolution' as ModuleId },
     { route: '/ai', label: 'AI Supervisor', icon: MessageSquare, desc: 'Evidence-backed life observation', moduleId: 'ai' as ModuleId },
     { route: '/ai/memory', label: 'AI Memory Manager', icon: Database, desc: 'Inspect & edit AI rules', moduleId: 'ai' as ModuleId },
     { route: '/ai/activity', label: 'AI Activity Log', icon: Activity, desc: 'Audit log of automated actions', moduleId: 'ai' as ModuleId },

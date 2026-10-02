@@ -27,8 +27,18 @@ import {
   ArcCalendarDay,
   DailyProgress,
   DailyProgressStatus,
-  DistractionEvent
+  DistractionEvent,
+  EvolutionState,
+  EvolutionProfile,
+  EvolutionEvidence,
+  EvolutionStageRecord,
+  EvolutionCandidateEvaluation,
+  CharacterArchetype,
+  CharacterArtStyle,
+  EvolutionTheme,
+  EvolutionCharacterVisibility
 } from '../types';
+import { generateEvolutionCharacterSvg } from './evolutionArt';
 
 // EXISTING BASE MOCK DATA
 export const initialUser: User = {
@@ -36,9 +46,12 @@ export const initialUser: User = {
   name: 'Kunal',
   title: 'Winter Arc Protocol',
   winterArcStartDate: '2026-09-29',
-  currentDayIndex: 1,
+  currentDayIndex: 37,
   avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-  themePreference: 'warm-hearth'
+  themePreference: 'dark',
+  characterVisibility: 'show',
+  characterStyle: 'cinematic',
+  preferredArchetype: 'Strategist'
 };
 
 export const initialCategories: Category[] = [
@@ -1737,3 +1750,181 @@ export const initialDailyProgressHistory: DailyProgress[] = [
     reflection: 'Clean, focused execution day. Calendar modal and logout flow integrated with existing system.'
   }
 ];
+
+// ==========================================
+// EVOLUTION THEME & CHARACTER SYSTEM MOCK DATA
+// ==========================================
+
+export const initialEvolutionProfile: EvolutionProfile = {
+  discipline: 74,
+  consistency: 68,
+  learning: 81,
+  execution: 62,
+  health: 59,
+  financialControl: 71,
+  timeManagement: 64,
+  cognitiveGrowth: 77,
+  goalProgress: 73,
+  overallScore: 70
+};
+
+export const initialEvolutionEvidence: EvolutionEvidence = {
+  trackingConsistencyPct: 87,
+  learningHours: 24,
+  milestoneCompletionPct: 81,
+  cognitivePerformanceScore: 76,
+  sleepConsistency: 'Inconsistent sleep window (avg 6.1h, 4 late nights past 1:00 AM)',
+  financialAdherence: 'Discretionary spending above target (₹14,200 vs ₹12,000 ceiling)',
+  positiveEvidences: [
+    '87% tracking consistency across all active life modules over the last 30 days',
+    '24 hours dedicated to PyTorch, Go algorithms, and systems engineering',
+    '81% milestone on-track completion rate across goals hierarchy',
+    '76% cognitive challenge performance index in Cognitive Lab'
+  ],
+  frictionPoints: [
+    'Inconsistent sleep window (slipping past 1:00 AM on 4 occasions)',
+    'Discretionary food & gadget spending slightly exceeded monthly ceiling'
+  ],
+  strongestArea: 'Learning consistency & deep problem-solving routines',
+  biggestInconsistency: 'Time management & bedtime discipline',
+  nextEvolutionCriteria: 'Requires sustained adherence across bedtime routines and time leak prevention for 14 additional consecutive days.'
+};
+
+export const initialEvolutionCandidate: EvolutionCandidateEvaluation = {
+  currentStage: 3,
+  currentStageName: 'Growth',
+  targetStage: 4,
+  targetStageName: 'Execution',
+  targetArchetype: 'Strategist',
+  observationPeriodDays: 28,
+  confidenceScore: 91,
+  isReady: false,
+  status: 'Observation period in progress',
+  summaryExplanation:
+    'Your overall performance improved, but the improvement was not consistent enough across all dimensions to qualify for the next stage. Your strongest area was learning. Your biggest inconsistency was time management. Current stage remains: Discipline / Growth.',
+  detailedCriteria: [
+    { label: 'Tracking Consistency', target: '≥ 85% for 4 weeks', actual: '87%', met: true },
+    { label: 'Learning Volume', target: '≥ 20h per month', actual: '24h', met: true },
+    { label: 'Milestone Execution', target: '≥ 80% on-track', actual: '81%', met: true },
+    { label: 'Bedtime & Recovery Stability', target: '≥ 21 days on-schedule', actual: '14 days', met: false },
+    { label: 'Budgetary Control', target: 'Within monthly ceiling', actual: 'Exceeded by ₹2,200', met: false }
+  ]
+};
+
+export const initialEvolutionHistory: EvolutionStageRecord[] = [
+  {
+    id: 'evo_stage_1',
+    stage: 1,
+    stageName: 'Awakening',
+    archetype: 'Explorer',
+    unlockedDate: 'OCT 2026',
+    unlockedDayIndex: 7,
+    characterImageUrl: generateEvolutionCharacterSvg('Explorer', 1, 'cinematic'),
+    characterPose: 'Awakened traveler initiating daily lifelogging routines',
+    environmentDescription: 'Dawn on the frost line; fog clearing over mountain ridge',
+    evolutionScore: 54,
+    profile: {
+      discipline: 52,
+      consistency: 50,
+      learning: 58,
+      execution: 48,
+      health: 60,
+      financialControl: 55,
+      timeManagement: 50,
+      cognitiveGrowth: 56,
+      goalProgress: 53,
+      overallScore: 54
+    },
+    evidence: {
+      trackingConsistencyPct: 72,
+      learningHours: 12,
+      milestoneCompletionPct: 60,
+      cognitivePerformanceScore: 58,
+      sleepConsistency: 'Baseline regular (avg 7.0h)',
+      financialAdherence: 'Baseline expenses logged',
+      positiveEvidences: ['7+ days continuous tracking established', 'Initial goals and milestones configured'],
+      frictionPoints: ['Unfamiliarity with deep work blocks'],
+      strongestArea: 'Initial tracking consistency',
+      biggestInconsistency: 'Routine friction',
+      nextEvolutionCriteria: '21+ days of consistent logging'
+    },
+    aiExplanation:
+      'You have crossed the threshold from passive observation into active protocol tracking. First goals and milestones recorded without abandonment.',
+    userReflection: 'Felt tough establishing the habit the first few days, but having the dashboard made accountability real.'
+  },
+  {
+    id: 'evo_stage_2',
+    stage: 2,
+    stageName: 'Discipline',
+    archetype: 'Scholar',
+    unlockedDate: 'NOV 2026',
+    unlockedDayIndex: 21,
+    characterImageUrl: generateEvolutionCharacterSvg('Scholar', 2, 'cinematic'),
+    characterPose: 'Disciplined student surrounded by focused energy nodes',
+    environmentDescription: 'Ancient library sanctum lit by glowing ember crystals',
+    evolutionScore: 66,
+    profile: {
+      discipline: 68,
+      consistency: 64,
+      learning: 72,
+      execution: 58,
+      health: 62,
+      financialControl: 65,
+      timeManagement: 60,
+      cognitiveGrowth: 70,
+      goalProgress: 66,
+      overallScore: 66
+    },
+    evidence: {
+      trackingConsistencyPct: 82,
+      learningHours: 18,
+      milestoneCompletionPct: 74,
+      cognitivePerformanceScore: 68,
+      sleepConsistency: 'Improved bedtime adherence',
+      financialAdherence: 'Consumption allocation tracked',
+      positiveEvidences: ['21+ days continuous logs without drop-off', 'Consistent morning study hours established'],
+      frictionPoints: ['Afternoon context switching between social feeds'],
+      strongestArea: 'Learning routines',
+      biggestInconsistency: 'Afternoon focus drops',
+      nextEvolutionCriteria: 'Sustained milestone completions and cognitive growth'
+    },
+    aiExplanation:
+      'Evidence shows sustained behavioral shift over 3 consecutive weeks. Learning routines adhered to consistently despite external distractions.',
+    userReflection: 'Finally stopped skipping learning sessions. The cognitive challenges pushed my problem-solving clarity.'
+  },
+  {
+    id: 'evo_stage_3',
+    stage: 3,
+    stageName: 'Growth',
+    archetype: 'Strategist',
+    unlockedDate: 'JAN 2027',
+    unlockedDayIndex: 37,
+    characterImageUrl: generateEvolutionCharacterSvg('Strategist', 3, 'cinematic'),
+    characterPose: 'Tactical strategist reviewing energy lattice and decision matrices',
+    environmentDescription: 'Citadel war room overlooking snowy valley, star charts glowing',
+    evolutionScore: 70,
+    profile: initialEvolutionProfile,
+    evidence: initialEvolutionEvidence,
+    aiExplanation:
+      'Your current stage is based on the last 30 days of data. Your behavior has shown marked improvement in learning consistency, goal decomposition, and reasoning skills in Cognitive Lab.',
+    userReflection: 'I feel far more deliberate with my priorities. Now I need to lock down sleep and eliminate evening distractions.'
+  }
+];
+
+export const initialEvolutionState: EvolutionState = {
+  currentStage: 3,
+  currentStageName: 'Growth',
+  currentArchetype: 'Strategist',
+  characterStyle: 'cinematic',
+  characterVisibility: 'show',
+  progressToNextEvolution: 73,
+  observationPeriodDays: 28,
+  aiConfidenceScore: 91,
+  currentProfile: initialEvolutionProfile,
+  currentEvidence: initialEvolutionEvidence,
+  characterImageUrl: generateEvolutionCharacterSvg('Strategist', 3, 'cinematic'),
+  history: initialEvolutionHistory,
+  lastEvaluatedAt: '2026-10-01',
+  candidateEvaluation: initialEvolutionCandidate
+};
+

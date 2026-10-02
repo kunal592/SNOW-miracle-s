@@ -22,7 +22,12 @@ import {
   WorkspacePreferences,
   ArcCalendarDay,
   DailyProgress,
-  AuthSession
+  AuthSession,
+  EvolutionState,
+  CharacterArtStyle,
+  CharacterArchetype,
+  EvolutionCharacterVisibility,
+  AppUsageSession
 } from '../types';
 import { DEFAULT_WORKSPACE_PREFERENCES } from './moduleRegistry';
 import {
@@ -47,7 +52,8 @@ import {
   initialAIActivityLogs,
   initialAIInsights,
   initialArcCalendarDays,
-  initialDailyProgressHistory
+  initialDailyProgressHistory,
+  initialEvolutionState
 } from './mockData';
 
 const STORAGE_KEYS = {
@@ -74,9 +80,11 @@ const STORAGE_KEYS = {
   WORKSPACE_PREFERENCES: 'snow_workspace_preferences',
   ARC_CALENDAR: 'snow_arc_calendar',
   DAILY_PROGRESS: 'snow_daily_progress',
+  EVOLUTION_STATE: 'snow_evolution_state',
   AUTH_SESSION: 'snow_auth_session',
   AUTH_TOKEN: 'snow_access_token',
-  REFRESH_TOKEN: 'snow_refresh_token'
+  REFRESH_TOKEN: 'snow_refresh_token',
+  APP_USAGE_SESSIONS: 'snow_app_usage_sessions'
 };
 
 function getItem<T>(key: string, fallback: T): T {
@@ -199,6 +207,10 @@ export const Storage = {
     return updated;
   },
 
+  // EVOLUTION THEME & CHARACTER SYSTEM
+  getEvolutionState: (): EvolutionState => getItem(STORAGE_KEYS.EVOLUTION_STATE, initialEvolutionState),
+  setEvolutionState: (state: EvolutionState): void => setItem(STORAGE_KEYS.EVOLUTION_STATE, state),
+
   // AUTH SESSION
   getAuthSession: (): AuthSession => getItem(STORAGE_KEYS.AUTH_SESSION, {
     userId: 'usr_001',
@@ -224,5 +236,9 @@ export const Storage = {
 
   resetAll: () => {
     localStorage.clear();
-  }
+  },
+
+  // APP USAGE TRACKER
+  getAppUsageSessions: (): AppUsageSession[] => getItem(STORAGE_KEYS.APP_USAGE_SESSIONS, []),
+  setAppUsageSessions: (sessions: AppUsageSession[]) => setItem(STORAGE_KEYS.APP_USAGE_SESSIONS, sessions)
 };

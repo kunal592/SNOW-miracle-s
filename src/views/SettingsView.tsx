@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
 import { Settings, User as UserIcon, Sparkles, Moon, Sun, Bell, Database, ShieldAlert, Trash2, CheckCircle2, Calendar, LogOut } from 'lucide-react';
-import { User, Category } from '../types';
+import {
+  User,
+  Category,
+  EvolutionState,
+  EvolutionTheme,
+  EvolutionCharacterVisibility,
+  CharacterArtStyle,
+  CharacterArchetype
+} from '../types';
 import { Storage } from '../lib/storage';
+import { generateEvolutionCharacterSvg } from '../lib/evolutionArt';
 
 interface SettingsViewProps {
   user: User;
@@ -11,6 +20,8 @@ interface SettingsViewProps {
   onNavigate?: (route: string) => void;
   onOpenCalendar?: () => void;
   onLogout?: () => void;
+  evolutionState?: EvolutionState;
+  onUpdateEvolutionState?: (state: EvolutionState) => void;
 }
 
 export const SettingsView: React.FC<SettingsViewProps> = ({
@@ -20,17 +31,49 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   onShowToast,
   onNavigate,
   onOpenCalendar,
-  onLogout
+  onLogout,
+  evolutionState,
+  onUpdateEvolutionState
 }) => {
   const [userName, setUserName] = useState(user.name);
   const [userTitle, setUserTitle] = useState(user.title);
-  const [theme, setTheme] = useState(user.themePreference || 'warm-hearth');
+  const [theme, setTheme] = useState<EvolutionTheme>(user.themePreference || 'dark');
+  const [charVisibility, setCharVisibility] = useState<EvolutionCharacterVisibility>(
+    user.characterVisibility || 'show'
+  );
+  const [charStyle, setCharStyle] = useState<CharacterArtStyle>(
+    user.characterStyle || 'cinematic'
+  );
+  const [archetype, setArchetype] = useState<CharacterArchetype>(
+    user.preferredArchetype || 'Strategist'
+  );
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
-    const updated = { ...user, name: userName, title: userTitle, themePreference: theme };
+    const updated: User = {
+      ...user,
+      name: userName,
+      title: userTitle,
+      themePreference: theme,
+      characterVisibility: charVisibility,
+      characterStyle: charStyle,
+      preferredArchetype: archetype
+    };
     onUpdateUser(updated);
-    onShowToast('Profile & Settings updated successfully', 'success');
+
+    if (evolutionState && onUpdateEvolutionState) {
+      const updatedEvo: EvolutionState = {
+        ...evolutionState,
+        currentArchetype: archetype,
+        characterStyle: charStyle,
+        characterVisibility: charVisibility,
+        characterImageUrl: generateEvolutionCharacterSvg(archetype, evolutionState.currentStage, charStyle)
+      };
+      onUpdateEvolutionState(updatedEvo);
+      Storage.setEvolutionState(updatedEvo);
+    }
+
+    onShowToast('Profile, Theme & Evolution settings updated successfully', 'success');
   };
 
   const handleResetData = () => {
@@ -81,32 +124,160 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
             {/* APPEARANCE THEMES */}
             <div className="space-y-2 pt-2 border-t border-amber-500/15">
-              <label className="block text-neutral-300 font-semibold">Visual Aesthetics Theme</label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <div className="flex items-center justify-between">
+                <label className="block text-neutral-300 font-semibold">Appearance Theme</label>
+                <span className="text-[10px] text-amber-400 font-mono">{theme}</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 {[
-                  { id: 'warm-hearth', label: 'Warm Hearth (Default)', color: 'bg-gradient-to-r from-amber-500 to-orange-600' },
-                  { id: 'cozy-light', label: 'Cozy Sunset Light', color: 'bg-amber-200 text-neutral-900' },
-                  { id: 'amber-gold', label: 'Amber Gold', color: 'bg-amber-400 text-neutral-950' },
-                  { id: 'cyber-ember', label: 'Cyber Ember', color: 'bg-gradient-to-r from-orange-500 to-rose-600' }
+                  { id: 'dark', label: 'Dark (Default)', desc: 'Warm charcoal & amber glow', color: 'bg-neutral-900 border-amber-500' },
+                  { id: 'light-clean', label: 'Light — Clean', desc: 'Minimal white, crisp borders', color: 'bg-white border-slate-300 text-slate-900' },
+                  { id: 'light-cinematic', label: 'Light — Cinematic', desc: 'Warmer surfaces & gradient glow', color: 'bg-[#faf5ed] border-amber-300 text-stone-900' }
                 ].map((t) => (
                   <button
                     key={t.id}
                     type="button"
                     onClick={() => setTheme(t.id as any)}
-                    className={`p-3 rounded-2xl border text-xs font-bold transition flex items-center justify-between ${
-                      theme === t.id ? 'border-amber-500 bg-amber-500/20 text-amber-200' : 'border-neutral-800 bg-[#12100e] text-neutral-400'
+                    className={`p-3.5 rounded-2xl border text-left transition flex flex-col justify-between cursor-pointer ${
+                      theme === t.id
+                        ? 'border-amber-500 bg-amber-500/20 text-amber-200 shadow-md shadow-amber-950/40 ring-1 ring-amber-400'
+                        : 'border-neutral-800 bg-[#12100e] text-neutral-400 hover:border-neutral-700'
                     }`}
                   >
-                    <span>{t.label}</span>
-                    <div className={`w-3 h-3 rounded-full ${t.color}`} />
+                    <div className="flex items-center justify-between w-full mb-1">
+                      <span className="font-bold text-xs">{t.label}</span>
+                      <div className={`w-3.5 h-3.5 rounded-full border ${t.color}`} />
+                    </div>
+                    <span className="text-[10px] text-neutral-400">{t.desc}</span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Bonus Themes */}
+              <div className="pt-1 flex items-center gap-2">
+                <span className="text-[10px] text-neutral-400">Atmospheric Presets:</span>
+                {[
+                  { id: 'amber-gold', label: 'Amber Gold' },
+                  { id: 'cyber-ember', label: 'Cyber Ember' }
+                ].map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setTheme(t.id as any)}
+                    className={`px-2.5 py-1 rounded-lg text-[10px] font-semibold border transition cursor-pointer ${
+                      theme === t.id
+                        ? 'border-amber-400 bg-amber-500/20 text-amber-200'
+                        : 'border-neutral-800 bg-[#12100e] text-neutral-400 hover:text-neutral-200'
+                    }`}
+                  >
+                    {t.label}
                   </button>
                 ))}
               </div>
             </div>
 
+            {/* EVOLUTION CHARACTER CONTROLS */}
+            <div className="space-y-4 pt-4 border-t border-amber-500/15">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xs font-bold text-amber-200 uppercase tracking-wider flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-amber-400" />
+                    <span>Evolution Character System</span>
+                  </h3>
+                  <p className="text-[11px] text-neutral-400 mt-0.5">
+                    Configure your character's visibility, artistic direction, and chosen archetype.
+                  </p>
+                </div>
+
+                {onNavigate && (
+                  <button
+                    type="button"
+                    onClick={() => onNavigate('/evolution')}
+                    className="text-[11px] text-amber-400 hover:text-amber-300 font-semibold underline underline-offset-2 cursor-pointer"
+                  >
+                    View Evolution Timeline →
+                  </button>
+                )}
+              </div>
+
+              {/* Character Visibility */}
+              <div className="space-y-1.5">
+                <label className="block text-neutral-300 font-semibold text-[11px]">
+                  Evolution Character Presence
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { id: 'show', label: 'Show', desc: 'Hero card with artwork' },
+                    { id: 'minimal', label: 'Minimal', desc: 'Compact badge' },
+                    { id: 'hide', label: 'Hide', desc: 'Text-only banner' }
+                  ].map((vis) => (
+                    <button
+                      key={vis.id}
+                      type="button"
+                      onClick={() => setCharVisibility(vis.id as any)}
+                      className={`p-2.5 rounded-xl border text-center transition cursor-pointer ${
+                        charVisibility === vis.id
+                          ? 'border-amber-500 bg-amber-500/20 text-amber-200 font-bold'
+                          : 'border-neutral-800 bg-[#12100e] text-neutral-400 hover:border-neutral-700'
+                      }`}
+                    >
+                      <div className="text-xs">{vis.label}</div>
+                      <div className="text-[9px] text-neutral-400 mt-0.5">{vis.desc}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Character Art Direction Style */}
+              <div className="space-y-1.5">
+                <label className="block text-neutral-300 font-semibold text-[11px]">
+                  Art Direction Style
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {['anime', 'manga', 'cinematic', 'fantasy', 'sci-fi', 'realistic', 'minimal'].map((st) => (
+                    <button
+                      key={st}
+                      type="button"
+                      onClick={() => setCharStyle(st as any)}
+                      className={`px-3 py-1.5 rounded-xl text-xs capitalize border transition cursor-pointer ${
+                        charStyle === st
+                          ? 'border-amber-500 bg-amber-500/20 text-amber-200 font-bold shadow-sm'
+                          : 'border-neutral-800 bg-[#12100e] text-neutral-400 hover:border-neutral-700'
+                      }`}
+                    >
+                      {st}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Character Archetype */}
+              <div className="space-y-1.5">
+                <label className="block text-neutral-300 font-semibold text-[11px]">
+                  Preferred Archetype
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {['Strategist', 'Warrior', 'Scholar', 'Explorer', 'Engineer', 'Mage', 'Leader'].map((arch) => (
+                    <button
+                      key={arch}
+                      type="button"
+                      onClick={() => setArchetype(arch as any)}
+                      className={`p-2.5 rounded-xl text-xs border text-left transition cursor-pointer ${
+                        archetype === arch
+                          ? 'border-amber-500 bg-amber-500/20 text-amber-200 font-bold shadow-sm'
+                          : 'border-neutral-800 bg-[#12100e] text-neutral-400 hover:border-neutral-700'
+                      }`}
+                    >
+                      <span>The {arch}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             <button
               type="submit"
-              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-neutral-950 font-bold text-xs shadow-lg flex items-center gap-2"
+              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-neutral-950 font-bold text-xs shadow-lg flex items-center gap-2 cursor-pointer transition active:scale-95"
             >
               <CheckCircle2 className="w-4 h-4" /> Save Profile Preferences
             </button>

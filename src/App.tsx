@@ -65,8 +65,10 @@ import { DailyProgressCalendarModal } from './components/DailyProgressCalendarMo
 import { LogoutConfirmModal } from './components/LogoutConfirmModal';
 import { ArcCalendarModal } from './components/ArcCalendarModal';
 import { AuthModal } from './components/AuthModal';
+import { EvolutionView } from './views/EvolutionView';
+import { WhyStageModal } from './components/WhyStageModal';
 import { api } from './lib/api';
-import { WorkspacePreferences } from './types';
+import { WorkspacePreferences, EvolutionState } from './types';
 
 export function App() {
   const [workspacePreferences, setWorkspacePreferences] = useState<WorkspacePreferences>(() =>
@@ -103,10 +105,16 @@ export function App() {
   // Toast System State
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  // Daily Progress Calendar & Logout Confirmation Modals
+  // Daily Progress Calendar, Logout Confirmation & Evolution Modals
   const [isDailyCalendarOpen, setIsDailyProgressCalendarOpen] = useState(false);
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isWhyStageModalOpen, setIsWhyStageModalOpen] = useState(false);
+
+  // Evolution Theme & Character State
+  const [evolutionState, setEvolutionState] = useState<EvolutionState>(() =>
+    Storage.getEvolutionState()
+  );
 
   // Logout confirmation flow according to specification
   const handleLogoutClick = () => {
@@ -531,6 +539,15 @@ export function App() {
         return <ReportsView onShowToast={handleShowToast} />;
       case '/export':
         return <ExportCenterView onShowToast={handleShowToast} />;
+      case '/evolution':
+        return (
+          <EvolutionView
+            evolutionState={evolutionState}
+            onOpenWhyStageModal={() => setIsWhyStageModalOpen(true)}
+            onNavigate={handleNavigate}
+            onShowToast={handleShowToast}
+          />
+        );
       case '/settings':
         return (
           <SettingsView
@@ -541,6 +558,11 @@ export function App() {
             onNavigate={handleNavigate}
             onOpenCalendar={() => setIsDailyProgressCalendarOpen(true)}
             onLogout={handleLogoutClick}
+            evolutionState={evolutionState}
+            onUpdateEvolutionState={(updated) => {
+              setEvolutionState(updated);
+              Storage.setEvolutionState(updated);
+            }}
           />
         );
       case '/settings/workspace':
@@ -602,6 +624,8 @@ export function App() {
             inbox={inbox}
             dailyBrief={initialDailyBrief}
             workspacePreferences={workspacePreferences}
+            evolutionState={evolutionState}
+            onOpenWhyStage={() => setIsWhyStageModalOpen(true)}
             onCompleteWorkspaceSetup={() => {
               const updated = { ...workspacePreferences, hasCompletedWorkspaceSetup: true };
               setWorkspacePreferences(updated);
@@ -666,6 +690,17 @@ export function App() {
           handleShowToast(`Session active as ${authedUser.name}`, 'success');
         }}
         onShowToast={handleShowToast}
+      />
+
+      {/* Why Am I At This Stage AI Evidence Dossier Modal */}
+      <WhyStageModal
+        isOpen={isWhyStageModalOpen}
+        onClose={() => setIsWhyStageModalOpen(false)}
+        evolutionState={evolutionState}
+        onViewEvolutionTimeline={() => {
+          setIsWhyStageModalOpen(false);
+          handleNavigate('/evolution');
+        }}
       />
     </AppShell>
   );

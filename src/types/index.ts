@@ -188,6 +188,35 @@ export interface WeeklyReview {
 }
 
 // BASE TYPES
+export type EvolutionTheme =
+  | 'dark'
+  | 'light-clean'
+  | 'light-cinematic'
+  | 'warm-hearth'
+  | 'cozy-light'
+  | 'amber-gold'
+  | 'cyber-ember';
+
+export type EvolutionCharacterVisibility = 'show' | 'minimal' | 'hide';
+
+export type CharacterArtStyle =
+  | 'anime'
+  | 'manga'
+  | 'cinematic'
+  | 'fantasy'
+  | 'sci-fi'
+  | 'realistic'
+  | 'minimal';
+
+export type CharacterArchetype =
+  | 'Strategist'
+  | 'Warrior'
+  | 'Scholar'
+  | 'Explorer'
+  | 'Engineer'
+  | 'Mage'
+  | 'Leader';
+
 export interface User {
   id: string;
   name: string;
@@ -196,7 +225,10 @@ export interface User {
   winterArcStartDate: string;
   currentDayIndex: number;
   avatarUrl?: string;
-  themePreference: 'warm-hearth' | 'cozy-light' | 'amber-gold' | 'cyber-ember';
+  themePreference: EvolutionTheme;
+  characterVisibility?: EvolutionCharacterVisibility;
+  characterStyle?: CharacterArtStyle;
+  preferredArchetype?: CharacterArchetype;
 }
 
 export interface AIExtraction {
@@ -461,6 +493,7 @@ export type ModuleId =
   | 'milestones'
   | 'cognitive'
   | 'ai'
+  | 'evolution'
   | 'journal'
   | 'analytics'
   | 'reports';
@@ -546,5 +579,121 @@ export interface ArcCalendarDay {
   deepWorkHours?: number;
   tags?: string[];
   updatedAt?: string;
+}
+
+// ==========================================
+// EVOLUTION THEME & CHARACTER SYSTEM
+// ==========================================
+
+export interface EvolutionProfile {
+  discipline: number; // 0 - 100
+  consistency: number;
+  learning: number;
+  execution: number;
+  health: number;
+  financialControl: number;
+  timeManagement: number;
+  cognitiveGrowth: number;
+  goalProgress: number;
+  overallScore: number;
+}
+
+export interface EvolutionEvidence {
+  trackingConsistencyPct: number; // e.g. 87%
+  learningHours: number; // e.g. 24h
+  milestoneCompletionPct: number; // e.g. 81%
+  cognitivePerformanceScore: number; // e.g. 76%
+  sleepConsistency: string; // e.g. "Inconsistent sleep (avg 6.1h)"
+  financialAdherence: string; // e.g. "Spending slightly above monthly discretionary ceiling"
+  positiveEvidences: string[];
+  frictionPoints: string[];
+  strongestArea: string;
+  biggestInconsistency: string;
+  nextEvolutionCriteria: string;
+}
+
+export interface EvolutionStageRecord {
+  id: string;
+  stage: number; // 0 - 5
+  stageName: string; // "Awakening", "Discipline", "Growth", "Execution", "Mastery"
+  archetype: CharacterArchetype;
+  unlockedDate: string; // e.g. "OCT 2026", "NOV 2026", "2026-10-15"
+  unlockedDayIndex: number;
+  characterImageUrl: string;
+  characterPose: string;
+  environmentDescription: string;
+  evolutionScore: number;
+  profile: EvolutionProfile;
+  evidence: EvolutionEvidence;
+  aiExplanation: string;
+  userReflection?: string;
+}
+
+export interface EvolutionCandidateEvaluation {
+  currentStage: number;
+  currentStageName: string;
+  targetStage: number;
+  targetStageName: string;
+  targetArchetype: CharacterArchetype;
+  observationPeriodDays: number;
+  confidenceScore: number; // e.g. 91%
+  isReady: boolean;
+  status: 'Ready for evolution' | 'Observation period in progress' | 'Stage maintained (inconsistent patterns)';
+  summaryExplanation: string;
+  detailedCriteria: {
+    label: string;
+    target: string;
+    actual: string;
+    met: boolean;
+  }[];
+}
+
+export interface EvolutionState {
+  currentStage: number; // 0 - 5
+  currentStageName: string;
+  currentArchetype: CharacterArchetype;
+  characterStyle: CharacterArtStyle;
+  characterVisibility: EvolutionCharacterVisibility;
+  progressToNextEvolution: number; // e.g. 73%
+  observationPeriodDays: number; // e.g. 28 days
+  aiConfidenceScore: number; // e.g. 91%
+  currentProfile: EvolutionProfile;
+  currentEvidence: EvolutionEvidence;
+  characterImageUrl: string;
+  history: EvolutionStageRecord[];
+  lastEvaluatedAt: string;
+  candidateEvaluation: EvolutionCandidateEvaluation;
+}
+
+// ==========================================
+// APP USAGE TRACKER
+// ==========================================
+
+export type AppUsageCategory =
+  | 'social'
+  | 'video'
+  | 'professional'
+  | 'finance'
+  | 'browser'
+  | 'other';
+
+export interface TrackedApp {
+  id: string;
+  name: string;
+  slug: string;
+  icon: string; // emoji or icon identifier
+  category: AppUsageCategory;
+  color: string; // accent color for the app
+}
+
+export interface AppUsageSession {
+  id: string;
+  appId: string;
+  userId: string;
+  startedAt: string; // ISO timestamp
+  endedAt: string | null; // null if active
+  durationSeconds: number | null; // null if active
+  date: string; // YYYY-MM-DD
+  status: 'active' | 'completed';
 }
 

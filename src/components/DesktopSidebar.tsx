@@ -24,9 +24,11 @@ import {
   ChevronDown,
   ChevronUp,
   Layers,
-  Calendar
+  Calendar,
+  Dna
 } from 'lucide-react';
 import { User, WorkspacePreferences, ModuleId } from '../types';
+import { AppUsageTracker } from './AppUsageTracker';
 
 interface DesktopSidebarProps {
   currentRoute: string;
@@ -36,6 +38,7 @@ interface DesktopSidebarProps {
   user: User;
   unreadInboxCount: number;
   workspacePreferences?: WorkspacePreferences;
+  onShowToast?: (text: string, type?: 'success' | 'error' | 'info') => void;
 }
 
 interface NavItem {
@@ -58,7 +61,8 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
   onOpenCalendar,
   user,
   unreadInboxCount,
-  workspacePreferences
+  workspacePreferences,
+  onShowToast
 }) => {
   const [isMoreExpanded, setIsMoreExpanded] = useState(false);
 
@@ -91,6 +95,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
       items: [
         { route: '/cognitive', label: 'Cognitive Lab', icon: BrainCircuit, moduleId: 'cognitive' },
         { route: '/cognitive/profile', label: 'Skill Profile (TPI)', icon: Sparkles, moduleId: 'cognitive' },
+        { route: '/evolution', label: 'Evolution Dossier', icon: Dna, moduleId: 'evolution' },
         { route: '/ai', label: 'AI Supervisor', icon: MessageSquare, moduleId: 'ai' }
       ]
     },
@@ -293,6 +298,9 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
           })}
         </div>
       </div>
+
+      {/* App Usage Tracker — ABOVE the profile card, per spec */}
+      <AppUsageTracker onShowToast={onShowToast ?? (() => {})} />
 
       {/* User Footer: Click to open Winter Arc Progress & Distraction Calendar */}
       <div className="p-3 border-t border-amber-500/20 bg-[#12100e]">

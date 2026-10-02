@@ -140,6 +140,16 @@ export const MODULE_REGISTRY: ModuleDefinition[] = [
     route: '/reports',
     canHide: true,
     defaultOrderIndex: 13
+  },
+  {
+    id: 'evolution',
+    name: 'Evolution & Dossier',
+    iconName: 'Dna',
+    description: 'Behavioral mirror, character evolution stages & timeline',
+    category: 'growth',
+    route: '/evolution',
+    canHide: true,
+    defaultOrderIndex: 14
   }
 ];
 

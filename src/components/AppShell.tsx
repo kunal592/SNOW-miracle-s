@@ -89,6 +89,7 @@ export const AppShell: React.FC<AppShellProps> = ({
         user={user}
         unreadInboxCount={unreadInboxCount}
         workspacePreferences={workspacePreferences}
+        onShowToast={onShowToast}
       />
 
       {/* Main Content Area */}
