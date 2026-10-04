@@ -5,18 +5,19 @@ services:
     image: postgres:16-alpine
     container_name: snow-postgres
     environment:
-      POSTGRES_USER: snow
-      POSTGRES_PASSWORD: snow
-      POSTGRES_DB: snow_dev
+      POSTGRES_USER: ${DB_USER:-snow}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-snow_secret_pass}
+      POSTGRES_DB: ${DB_NAME:-snow_db}
     ports:
       - "5434:5432"
     volumes:
       - snow_pg_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U snow -d snow_dev"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-snow} -d ${DB_NAME:-snow_db}"]
       interval: 5s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
 
   redis:
     image: redis:7-alpine
@@ -29,24 +30,31 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+    restart: unless-stopped
 
-  # Uncomment when you want to run the API in Docker too:
-  # api:
-  #   build: ./backend
-  #   container_name: snow-api
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_healthy
-  #   env_file:
-  #     - ./backend/.env
-  #   ports:
-  #     - "8080:8080"
-  #   volumes:
-  #     - ./backend:/app
-  #   working_dir: /app
-  #   command: go run ./cmd/server
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: snow-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      APP_ENV: production
+      PORT: "8090"
+      DB_URL: postgres://${DB_USER:-snow}:${DB_PASSWORD:-snow_secret_pass}@postgres:5432/${DB_NAME:-snow_db}?sslmode=disable
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-snow_production_super_secret_jwt_key_2026}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_REDIRECT_URL: ${GOOGLE_REDIRECT_URL:-http://localhost:8090/api/v1/auth/google/callback}
+    ports:
+      - "8090:8090"
+    restart: unless-stopped
 
 volumes:
   snow_pg_data:
