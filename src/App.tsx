@@ -149,6 +149,50 @@ export function App() {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
+  // Handle SPA Auth Redirect Callback (e.g. /auth/callback?access_token=...)
+  useEffect(() => {
+    if (window.location.pathname.startsWith('/auth/callback')) {
+      const params = new URLSearchParams(window.location.search);
+      const accessToken = params.get('access_token');
+      const refreshToken = params.get('refresh_token');
+
+      if (accessToken) {
+        Storage.setTokens(accessToken, refreshToken || '');
+        api.users.getMe().then(({ user: fetchedUser }) => {
+          const freshUser: User = {
+            id: fetchedUser.id || 'usr_' + Math.random().toString(36).substring(2, 9),
+            name: fetchedUser.displayName || 'New User',
+            email: fetchedUser.email || '',
+            title: 'Winter Arc Strategist',
+            winterArcStartDate: new Date().toISOString().split('T')[0],
+            currentDayIndex: 1,
+            themePreference: 'dark'
+          };
+          Storage.resetFreshUserWorkspace(freshUser);
+          setUser(freshUser);
+          setExpenses([]);
+          setConsumption([]);
+          setFuel([]);
+          setTimeEntries([]);
+          setLearningSessions([]);
+          setLearningGoals([]);
+          setFood([]);
+          setHealth([]);
+          setGoals([]);
+          setMilestones([]);
+          setInbox([]);
+          setJournal([]);
+
+          handleShowToast(`Signed in as ${freshUser.name}! Welcome to ChatGPT Context Import.`, 'success');
+          handleNavigate('/settings/import');
+        }).catch((err: any) => {
+          console.warn('OAuth getMe fallback:', err);
+          handleNavigate('/settings/import');
+        });
+      }
+    }
+  }, []);
+
   // Sync route state with history API
   const handleNavigate = (route: string) => {
     setCurrentRoute(route);
@@ -686,8 +730,22 @@ export function App() {
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         onLoginSuccess={(authedUser) => {
+          Storage.resetFreshUserWorkspace(authedUser);
           setUser(authedUser);
-          handleShowToast(`Session active as ${authedUser.name}`, 'success');
+          setExpenses([]);
+          setConsumption([]);
+          setFuel([]);
+          setTimeEntries([]);
+          setLearningSessions([]);
+          setLearningGoals([]);
+          setFood([]);
+          setHealth([]);
+          setGoals([]);
+          setMilestones([]);
+          setInbox([]);
+          setJournal([]);
+          handleShowToast(`Session active for ${authedUser.name}! Welcome to ChatGPT Context Import.`, 'success');
+          handleNavigate('/settings/import');
         }}
         onShowToast={handleShowToast}
       />

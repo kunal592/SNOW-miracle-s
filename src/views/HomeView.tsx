@@ -75,8 +75,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
 }) => {
   const enabledModules = workspacePreferences?.enabledModules;
   const isEnabled = (m: ModuleId) => !enabledModules || enabledModules.includes(m);
-  const todayStr = '2026-09-29';
-  const todayHealth = healthEntries.find((h) => h.date === todayStr) || healthEntries[0];
+  const todayStr = new Date().toISOString().split('T')[0];
+  const todayHealth = healthEntries.find((h) => h.date === todayStr) || healthEntries[0] || {
+    sleepHours: 0,
+    waterLiters: 0,
+    workoutCompleted: false,
+    stepsCount: 0
+  };
 
   // Daily totals
   const todayTime = timeEntries.filter((t) => t.date === todayStr);
@@ -373,15 +378,17 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <div className="space-y-1 text-xs">
               <div className="flex justify-between">
                 <span className="text-neutral-400">Sleep</span>
-                <span className="font-bold text-cyan-200">{todayHealth.sleepHours}h</span>
+                <span className="font-bold text-cyan-200">{todayHealth?.sleepHours ?? 0}h</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-neutral-400">Water</span>
-                <span className="font-bold text-cyan-300">{todayHealth.waterLiters}L</span>
+                <span className="font-bold text-cyan-300">{todayHealth?.waterLiters ?? 0}L</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-neutral-400">Workout</span>
-                <span className="font-bold text-emerald-400">✓ Completed</span>
+                <span className={`font-bold ${todayHealth?.workoutCompleted ? 'text-emerald-400' : 'text-neutral-400'}`}>
+                  {todayHealth?.workoutCompleted ? '✓ Completed' : 'Pending'}
+                </span>
               </div>
             </div>
           </div>

@@ -70,6 +70,23 @@ export const api = {
     }
   },
 
+  users: {
+    async getMe(): Promise<{ user: AuthUserResponse }> {
+      const { accessToken } = Storage.getTokens();
+      const res = await fetch(`${API_BASE_URL}/users/me`, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {})
+        }
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error?.message || 'Failed to fetch user profile');
+      }
+      return { user: data.data };
+    }
+  },
+
   activity: {
     async getDailyRange(from: string, to: string) {
       const { accessToken } = Storage.getTokens();

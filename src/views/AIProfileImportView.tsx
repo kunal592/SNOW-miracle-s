@@ -278,13 +278,21 @@ export function AIProfileImportView({
           </p>
         </div>
 
-        {/* Safety Rule Badge */}
-        <div className="mt-4 pt-4 border-t border-amber-500/20 flex items-center justify-between text-xs text-amber-300/90">
+        {/* Safety Rule Badge & Quick Skip */}
+        <div className="mt-4 pt-4 border-t border-amber-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-amber-300/90">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span className="font-medium">Strict Protocol:</span> Paste → Parse → Preview → Review → Approve
+            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span className="font-medium">Protocol:</span> Copy Prompt → Paste ChatGPT Output → Analyze & Import
           </div>
-          <span className="text-slate-400 italic">Never silently overwrites your data</span>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => onNavigate('/')}
+              className="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
+            >
+              <span>Skip & Start Clean Workspace</span>
+              <ArrowRight className="w-3.5 h-3.5 text-amber-400" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -528,13 +536,28 @@ export function AIProfileImportView({
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-2">
-            <button
-              onClick={() => onNavigate('/goals')}
-              className="py-2 px-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-medium flex items-center gap-1.5"
-            >
-              View Goals <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+          <div className="pt-3 border-t border-emerald-500/20 space-y-2">
+            <span className="text-xs font-bold text-emerald-300 uppercase tracking-wider block">What to do next:</span>
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                onClick={() => onNavigate('/')}
+                className="py-2.5 px-4 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-stone-950 font-bold rounded-xl text-xs flex items-center gap-2 shadow-lg cursor-pointer"
+              >
+                🚀 Go to Home Dashboard <ArrowRight className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => onNavigate('/goals')}
+                className="py-2.5 px-4 bg-emerald-600/30 hover:bg-emerald-600/40 border border-emerald-500/40 text-emerald-200 rounded-xl text-xs font-bold flex items-center gap-1.5 transition cursor-pointer"
+              >
+                🎯 View Goals & Milestones
+              </button>
+              <button
+                onClick={() => onNavigate('/settings/workspace')}
+                className="py-2.5 px-4 bg-stone-800 hover:bg-stone-700 text-neutral-300 rounded-xl text-xs font-bold border border-stone-700 transition cursor-pointer"
+              >
+                ⚙️ Customize Workspace
+              </button>
+            </div>
           </div>
         </div>
       )}

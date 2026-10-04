@@ -695,20 +695,32 @@ export function commitImportItems(
         break;
 
       case 'Milestones':
+        const today = new Date();
+        const daysOffset = (addedMilestoneCount + 1) * 14;
+        const targetDate = new Date(today.getTime() + daysOffset * 86400000).toISOString().split('T')[0];
+        
+        const phaseName = addedMilestoneCount === 0 
+          ? 'Phase 1: Foundation & Setup' 
+          : addedMilestoneCount === 1 
+          ? 'Phase 2: Core Execution & Growth' 
+          : `Phase ${addedMilestoneCount + 1}: Mastery & Review`;
+
         const newMs: Milestone = {
           id: 'ms_imp_' + Math.random().toString(36).substring(2, 9),
-          title: title,
-          date: '2026-10-31',
-          type: 'Checkpoint',
-          description: detail,
-          status: 'Upcoming',
+          title: `${phaseName} — ${title}`,
+          date: targetDate,
+          type: addedMilestoneCount === 0 ? 'Checkpoint' : (addedMilestoneCount === 1 ? 'Review' : 'Deadline'),
+          description: detail || `AI Organized Roadmap Checkpoint for ${title}`,
+          status: addedMilestoneCount === 0 ? 'Today' : 'Upcoming',
           linkedGoalIds: [],
           checklist: [
-            { id: 'ck_1', task: 'Initial setup & planning', done: false },
-            { id: 'ck_2', task: 'Review progress checkpoint', done: false }
+            { id: 'ck_1_' + Math.random().toString(36).substring(2, 5), task: `Step 1: Environment & Tooling Setup for ${title}`, done: false },
+            { id: 'ck_2_' + Math.random().toString(36).substring(2, 5), task: `Step 2: Core Execution & Implementation Sprints`, done: false },
+            { id: 'ck_3_' + Math.random().toString(36).substring(2, 5), task: `Step 3: Verification & Performance Audit`, done: false },
+            { id: 'ck_4_' + Math.random().toString(36).substring(2, 5), task: `Step 4: AI Supervisor Checkpoint Review & Signoff`, done: false }
           ]
         };
-        currentMilestones.unshift(newMs);
+        currentMilestones.push(newMs);
         addedMilestoneCount++;
         break;
 

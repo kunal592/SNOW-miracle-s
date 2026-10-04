@@ -171,10 +171,10 @@ export const Storage = {
   setWorkspacePreferences: (prefs: WorkspacePreferences) => setItem(STORAGE_KEYS.WORKSPACE_PREFERENCES, prefs),
 
   // ARC CALENDAR (Progress & Distracted tracking)
-  getArcCalendar: (): ArcCalendarDay[] => getItem(STORAGE_KEYS.ARC_CALENDAR, initialArcCalendarDays),
+  getArcCalendar: (): ArcCalendarDay[] => getItem(STORAGE_KEYS.ARC_CALENDAR, []),
   setArcCalendar: (days: ArcCalendarDay[]) => setItem(STORAGE_KEYS.ARC_CALENDAR, days),
   saveArcCalendarDay: (day: ArcCalendarDay): ArcCalendarDay[] => {
-    const days = getItem<ArcCalendarDay[]>(STORAGE_KEYS.ARC_CALENDAR, initialArcCalendarDays);
+    const days = getItem<ArcCalendarDay[]>(STORAGE_KEYS.ARC_CALENDAR, []);
     const existingIndex = days.findIndex((d) => d.date === day.date);
     let updated: ArcCalendarDay[];
     if (existingIndex >= 0) {
@@ -188,9 +188,9 @@ export const Storage = {
   },
 
   // DAILY PROGRESS HISTORY (Evidence-based progress & distraction calendar)
-  getDailyProgress: (): DailyProgress[] => getItem(STORAGE_KEYS.DAILY_PROGRESS, initialDailyProgressHistory),
+  getDailyProgress: (): DailyProgress[] => getItem(STORAGE_KEYS.DAILY_PROGRESS, []),
   getDailyProgressByDate: (date: string): DailyProgress | undefined => {
-    const list = getItem<DailyProgress[]>(STORAGE_KEYS.DAILY_PROGRESS, initialDailyProgressHistory);
+    const list = getItem<DailyProgress[]>(STORAGE_KEYS.DAILY_PROGRESS, []);
     return list.find((item) => item.date === date);
   },
   saveDailyProgress: (entry: DailyProgress): DailyProgress[] => {
@@ -236,6 +236,48 @@ export const Storage = {
 
   resetAll: () => {
     localStorage.clear();
+  },
+
+  resetFreshUserWorkspace: (newUser: User): void => {
+    const freshUser: User = {
+      ...newUser,
+      winterArcStartDate: new Date().toISOString().split('T')[0],
+      currentDayIndex: 1
+    };
+    setItem(STORAGE_KEYS.USER, freshUser);
+    setItem(STORAGE_KEYS.EXPENSES, []);
+    setItem(STORAGE_KEYS.CONSUMPTION, []);
+    setItem(STORAGE_KEYS.FUEL, []);
+    setItem(STORAGE_KEYS.TIME, []);
+    setItem(STORAGE_KEYS.LEARNING_SESSIONS, []);
+    setItem(STORAGE_KEYS.LEARNING_GOALS, []);
+    setItem(STORAGE_KEYS.FOOD, []);
+    setItem(STORAGE_KEYS.HEALTH, []);
+    setItem(STORAGE_KEYS.GOALS, []);
+    setItem(STORAGE_KEYS.MILESTONES, []);
+    setItem(STORAGE_KEYS.INBOX, []);
+    setItem(STORAGE_KEYS.JOURNAL, []);
+    setItem(STORAGE_KEYS.NOTIFICATIONS, []);
+    setItem(STORAGE_KEYS.ARC_CALENDAR, []);
+    setItem(STORAGE_KEYS.DAILY_PROGRESS, []);
+    setItem(STORAGE_KEYS.APP_USAGE_SESSIONS, []);
+    setItem(STORAGE_KEYS.EVOLUTION_STATE, {
+      currentStage: 1,
+      currentStageName: 'Foundation & Awakening',
+      currentArchetype: freshUser.preferredArchetype || 'Strategist',
+      currentScore: 10,
+      progressToNextEvolution: 10,
+      characterImageUrl: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=800&auto=format&fit=crop&q=80',
+      milestonesCompletedCount: 0,
+      deepWorkTotalHours: 0,
+      learningTotalHours: 0,
+      streakDays: 1,
+      unlockedBadges: ['Winter Arc Origin']
+    });
+    setItem(STORAGE_KEYS.WORKSPACE_PREFERENCES, {
+      ...DEFAULT_WORKSPACE_PREFERENCES,
+      hasCompletedWorkspaceSetup: false
+    });
   },
 
   // APP USAGE TRACKER
