@@ -14,6 +14,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { simulateAIExtraction } from '../lib/aiSimulator';
+import { useSpeechRecognition } from '../lib/useSpeechRecognition';
 import { AIExtraction, CategoryType, WorkspacePreferences } from '../types';
 
 interface QuickAddSheetProps {
@@ -69,13 +70,23 @@ export const QuickAddSheet: React.FC<QuickAddSheetProps> = ({
     }, 700);
   };
 
+  const { isListening, startListening, stopListening, isSupported } = useSpeechRecognition((spokenText) => {
+    if (spokenText) setDumpText(spokenText);
+  });
+
   const handleMicClick = () => {
-    setIsRecording(!isRecording);
-    if (!isRecording) {
-      setTimeout(() => {
-        setDumpText('₹200 petrol refill today, lasted 3 days');
-        setIsRecording(false);
-      }, 2500);
+    if (isListening) {
+      stopListening();
+    } else {
+      if (isSupported) {
+        startListening();
+      } else {
+        setIsRecording(true);
+        setTimeout(() => {
+          setDumpText('₹200 petrol refill today, lasted 3 days');
+          setIsRecording(false);
+        }, 2000);
+      }
     }
   };
 

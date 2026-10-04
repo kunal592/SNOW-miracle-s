@@ -26,7 +26,12 @@ export function simulateAIExtraction(rawInput: string): AIExtraction {
   let explanation = 'Identified general activity entry.';
   let confidence = 88;
 
-  if (text.includes('petrol') || text.includes('fuel') || text.includes('diesel') || text.includes('bike') || text.includes('car')) {
+  if (text.includes('instagram') || text.includes('youtube') || text.includes('reels') || text.includes('scrolled') || text.includes('wasted time') || text.includes('distracted') || text.includes('gaming') || text.includes('tiktok')) {
+    category = 'Entertainment';
+    suggestedAction = 'Flag Distraction';
+    confidence = 98;
+    explanation = `Flagged distraction / non-productive app time (${timeHours || 0.5}h detected). Alerted AI Supervisor to recalculate daily focus velocity.`;
+  } else if (text.includes('petrol') || text.includes('fuel') || text.includes('diesel') || text.includes('bike') || text.includes('car')) {
     category = 'Transport';
     isConsumption = true;
     suggestedAction = 'Create Consumption';

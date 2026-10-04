@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { InboxEntry, AIExtraction } from '../types';
 import { simulateAIExtraction } from '../lib/aiSimulator';
+import { useSpeechRecognition } from '../lib/useSpeechRecognition';
 
 interface UniversalInboxViewProps {
   inbox: InboxEntry[];
@@ -37,6 +38,10 @@ export const UniversalInboxView: React.FC<UniversalInboxViewProps> = ({
   const [isRecording, setIsRecording] = useState(false);
   const [filter, setFilter] = useState<'All' | 'Needs Review' | 'Approved'>('All');
 
+  const { isListening, startListening, stopListening, isSupported } = useSpeechRecognition((spokenText) => {
+    if (spokenText) setInputText(spokenText);
+  });
+
   const handleProcess = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!inputText.trim()) return;
@@ -51,12 +56,18 @@ export const UniversalInboxView: React.FC<UniversalInboxViewProps> = ({
   };
 
   const handleVoiceDictation = () => {
-    setIsRecording(!isRecording);
-    if (!isRecording) {
-      setTimeout(() => {
-        setInputText('Spent ₹320 on Basmati Rice, expected to last 20 days');
-        setIsRecording(false);
-      }, 2000);
+    if (isListening) {
+      stopListening();
+    } else {
+      if (isSupported) {
+        startListening();
+      } else {
+        setIsRecording(true);
+        setTimeout(() => {
+          setInputText('Spent ₹320 on Basmati Rice, expected to last 20 days');
+          setIsRecording(false);
+        }, 1500);
+      }
     }
   };
 

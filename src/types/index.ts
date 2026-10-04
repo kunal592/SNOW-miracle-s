@@ -243,7 +243,7 @@ export interface AIExtraction {
   extractedTimeHours?: number;
   confidenceScore: number;
   aiExplanation: string;
-  suggestedAction: 'Create Expense' | 'Create Consumption' | 'Log Time' | 'Log Learning' | 'Log Food' | 'Log Health';
+  suggestedAction: 'Create Expense' | 'Create Consumption' | 'Log Time' | 'Log Learning' | 'Log Food' | 'Log Health' | 'Flag Distraction';
 }
 
 export interface InboxEntry {
